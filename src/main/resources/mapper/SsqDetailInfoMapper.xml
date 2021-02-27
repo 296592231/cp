@@ -65,6 +65,6 @@
   <select id="selectListByLimit" resultMap="BaseResultMap">
         select
     <include refid="Base_Column_List" />
-        from ssq_base_info order by issueno desc limit 0,200;
+        from ssq_detail_info order by issueno desc limit 0,200;
   </select>
 </mapper>
