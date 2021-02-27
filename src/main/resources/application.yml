@@ -1,0 +1,41 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    druid:
+
+      type: com.alibaba.druid.pool.DruidDataSource
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://144.34.200.171:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true&useSSL=false&serverTimezone=UTC
+      username: root
+      password: root
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000;config.decrypt=true    #数据库密码加密
+      #filters: stat,config,wall,log4j   # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      initialSize: 10
+      minIdle: 10
+      #maxIdle: 25
+      maxActive: 100
+      maxWait: 60000
+      maxAge: 600000
+      removeAbandoned: true
+      removeAbandonedTimeout: 60
+      timeBetweenEvictionRunsMillis: 20000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      validationQueryTimeout: 25
+      validationInterval: 30
+      testOnBorrow: true
+      testWhileIdle: true
+      testOnReturn: true
+      maxOpenPreparedStatements: 100
+      jdbcInterceptors: ConnectionState
+      defaultTransactionIsolation: 2
+      initSQL: SELECT 1
+      logAbandoned: true
+      jmxEnabled: true
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.le.cp.entity
+
+
