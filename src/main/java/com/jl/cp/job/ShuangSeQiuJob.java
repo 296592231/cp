@@ -61,6 +61,16 @@ public class ShuangSeQiuJob {
     }
 
 
+    /**
+     * 批量新增详情数据
+     * Created by jl on 2021/2/27 12:25.
+     */
+    @Scheduled(cron = "0 50 17 * * ?")
+    public void  batchInsertDetail() {
+        shuangSeQiuJobService.batchInsertDetail();
+    }
+
+
 
 
 
