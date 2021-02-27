@@ -1,0 +1,29 @@
+env:
+  mysql:
+    driver: com.mysql.jdbc.Driver
+    url: jdbc:mysql://144.34.200.171:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true
+    username: root
+    password: EVeHEai6i/6aMPxll7+YNoVH14EgjDvi19Cd9Gmi7elCbUPR+YzNYUgmowc50mqIuYJ4SH9eRrezQYwpy2V1Fg==
+    publickey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALPeBr+KF3+3YpDTsuTDJnfih9lYMzWjVo744mfgYUL4maIx5H2xNGJOZmfOCRjTXjr1nvXEdEs6MYSgQDlV+O0CAwEAAQ==
+  redis:
+    url: 192.168.1.133:6379
+    password: myRedis
+    database: 6
+  publicAddress: http://cp.ngrok.alifepay.com:8380/
+  serverDir: /home/cp/  #服务器目录
+  serverTempDir: /home/cp/data/temp/  #服务器临时文件目录
+
+spring:
+  #开发减小redis连接数
+  redis:
+    pool:
+      max-idle: 5
+      min-idle: 0
+      max-active: 5
+
+#xxl-job定时框架配置
+xxl:
+  job:
+    executor:
+      # 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+      port: 9999
