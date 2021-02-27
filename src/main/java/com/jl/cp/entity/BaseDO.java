@@ -1,6 +1,6 @@
 package com.jl.cp.entity;
 
-import com.jksj.tftpos.common.constants.BaseConstant;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -49,8 +49,8 @@ public class BaseDO implements Serializable {
     public void initCreated() {
         Date date = new Date();
         this.setCreateTime(date);
-        this.setCreateUser(BaseConstant.DEFAULT_INPUT_BY);
-        this.setVersion(BaseConstant.DEFAULT_VERSION);
+        this.setCreateUser("SYSTEM");
+        this.setVersion(0L);
     }
 
     /**
@@ -60,10 +60,10 @@ public class BaseDO implements Serializable {
     public void initCreatedBy() {
         Date date = new Date();
         this.setCreateTime(date);
-        this.setCreateUser(BaseConstant.DEFAULT_INPUT_BY);
+        this.setCreateUser("SYSTEM");
         this.setUpdateTime(date);
-        this.setUpdateUser(BaseConstant.DEFAULT_INPUT_BY);
-        this.setVersion(BaseConstant.DEFAULT_VERSION);
+        this.setUpdateUser("SYSTEM");
+        this.setVersion(0L);
     }
     
     /**
@@ -72,11 +72,11 @@ public class BaseDO implements Serializable {
     */
     public void initInputDate() {
         this.setCreateTime(new Date());
-        this.setVersion(BaseConstant.DEFAULT_VERSION);
+        this.setVersion(0L);
     }
 
     public void initUpdateBy() {
-        this.setCreateUser(BaseConstant.DEFAULT_UPDATE_BY);
+        this.setCreateUser("SYSTEM");
         this.setUpdateTime(new Date());
     }
 }

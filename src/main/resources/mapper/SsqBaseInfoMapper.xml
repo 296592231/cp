@@ -8,16 +8,17 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="BIGINT" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="refernumber" property="refernumber" jdbcType="VARCHAR" />
     <result column="opendate" property="opendate" jdbcType="DATE" />
     <result column="issueno" property="issueno" jdbcType="VARCHAR" />
     <result column="number" property="number" jdbcType="VARCHAR" />
     <result column="saleamount" property="saleamount" jdbcType="VARCHAR" />
     <result column="totalmoney" property="totalmoney" jdbcType="VARCHAR" />
+    <result column="prize" property="prize" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, create_user, update_time, update_user, version, type, opendate, 
-    issueno, number, saleamount, totalmoney
+    id, create_time, create_user, update_time, update_user, version, refernumber, opendate,
+    issueno, number, saleamount, totalmoney,prize
   </sql>
 
 </mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jl.cp.mapper.SsqDetailInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.jl.cp.entity.SsqDetailInfoDO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="issueno" property="issueno" jdbcType="VARCHAR" />
+    <result column="a_qiu" property="aQiu" jdbcType="VARCHAR" />
+    <result column="a_pianyi" property="aPianyi" jdbcType="VARCHAR" />
+    <result column="a_daxiao" property="aDaxiao" jdbcType="VARCHAR" />
+    <result column="a_danshuang" property="aDanshuang" jdbcType="VARCHAR" />
+    <result column="a_yushu" property="aYushu" jdbcType="VARCHAR" />
+    <result column="a_wuxing" property="aWuxing" jdbcType="VARCHAR" />
+    <result column="b_qiu" property="bQiu" jdbcType="VARCHAR" />
+    <result column="b_pianyi" property="bPianyi" jdbcType="VARCHAR" />
+    <result column="b_daxiao" property="bDaxiao" jdbcType="VARCHAR" />
+    <result column="b_danshuang" property="bDanshuang" jdbcType="VARCHAR" />
+    <result column="b_yushu" property="bYushu" jdbcType="VARCHAR" />
+    <result column="b_wuxing" property="bWuxing" jdbcType="VARCHAR" />
+    <result column="c_qiu" property="cQiu" jdbcType="VARCHAR" />
+    <result column="c_pianyi" property="cPianyi" jdbcType="VARCHAR" />
+    <result column="c_daxiao" property="cDaxiao" jdbcType="VARCHAR" />
+    <result column="c_danshuang" property="cDanshuang" jdbcType="VARCHAR" />
+    <result column="c_yushu" property="cYushu" jdbcType="VARCHAR" />
+    <result column="c_wuxing" property="cWuxing" jdbcType="VARCHAR" />
+    <result column="d_qiu" property="dQiu" jdbcType="VARCHAR" />
+    <result column="d_pianyi" property="dPianyi" jdbcType="VARCHAR" />
+    <result column="d_daxiao" property="dDaxiao" jdbcType="VARCHAR" />
+    <result column="d_danshuang" property="dDanshuang" jdbcType="VARCHAR" />
+    <result column="d_yushu" property="dYushu" jdbcType="VARCHAR" />
+    <result column="d_wuxing" property="dWuxing" jdbcType="VARCHAR" />
+    <result column="e_qiu" property="eQiu" jdbcType="VARCHAR" />
+    <result column="e_pianyi" property="ePianyi" jdbcType="VARCHAR" />
+    <result column="e_daxiao" property="eDaxiao" jdbcType="VARCHAR" />
+    <result column="e_danshuang" property="eDanshuang" jdbcType="VARCHAR" />
+    <result column="e_yushu" property="eYushu" jdbcType="VARCHAR" />
+    <result column="e_wuxing" property="eWuxing" jdbcType="VARCHAR" />
+    <result column="f_qiu" property="fQiu" jdbcType="VARCHAR" />
+    <result column="f_pianyi" property="fPianyi" jdbcType="VARCHAR" />
+    <result column="f_daxiao" property="fDaxiao" jdbcType="VARCHAR" />
+    <result column="f_danshuang" property="fDanshuang" jdbcType="VARCHAR" />
+    <result column="f_yushu" property="fYushu" jdbcType="VARCHAR" />
+    <result column="f_wuxing" property="fWuxing" jdbcType="VARCHAR" />
+    <result column="sum_value" property="sumValue" jdbcType="VARCHAR" />
+    <result column="tail_sum_value" property="tailSumValue" jdbcType="VARCHAR" />
+    <result column="san_section" property="sanSection" jdbcType="VARCHAR" />
+    <result column="si_section" property="siSection" jdbcType="VARCHAR" />
+    <result column="qi_section" property="qiSection" jdbcType="VARCHAR" />
+    <result column="daxiao_ratio" property="daxiaoRatio" jdbcType="VARCHAR" />
+    <result column="danshuang_ratio" property="danshuangRatio" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_time, create_user, update_time, update_user, version,issueno, a_qiu, a_pianyi,
+    a_daxiao, a_danshuang, a_yushu, b_qiu, b_pianyi, b_daxiao, b_danshuang, b_yushu, 
+    c_qiu, c_pianyi, c_daxiao, c_danshuang, c_yushu, d_qiu, d_pianyi, d_daxiao, d_danshuang, 
+    d_yushu, e_qiu, e_pianyi, e_daxiao, e_danshuang, e_yushu, f_qiu, f_pianyi, f_daxiao, 
+    f_danshuang, f_yushu, sum_value, tail_sum_value, san_section, si_section, qi_section,
+    daxiao_ratio, danshuang_ratio,a_wuxing,b_wuxing,c_wuxing,d_wuxing,e_wuxing,f_wuxing
+  </sql>
+
+  <select id="selectListByLimit" resultMap="BaseResultMap">
+        select
+    <include refid="Base_Column_List" />
+        from ssq_base_info order by issueno desc limit 0,200;
+  </select>
+</mapper>
