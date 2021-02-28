@@ -4,7 +4,9 @@
  */
 package com.jl.cp.job.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.extra.mail.MailAccount;
 import cn.hutool.extra.mail.MailUtil;
 import com.google.gson.Gson;
 import com.jl.cp.constants.Constants;
@@ -87,13 +89,30 @@ public class ShuangSeQiuJobService {
             ssqBaseInfoMapper.insert(insertSsqBaseInfoDO);
             SsqDetailInfoDO ssqDetailInfoDO = getSsqDetailInfoDO(insertSsqBaseInfoDO.getNumber(),insertSsqBaseInfoDO.getIssueno());
             ssqDetailInfoMapper.insert(ssqDetailInfoDO);
+            getYuCeData(null);
 
-            //查询数据发送邮件
-            List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit();
-            String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS));
-            MailUtil.send("296592231@qq.com", "彩票6行6列预测", content, true);
         }
 
+    }
+
+    /**
+      * @Author LeJiang
+      * @Remark 手动获取需要查看的数据集合
+      */
+    public void getYuCeData (Long issueno) {
+        //查询数据发送邮件
+        List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(issueno);
+        String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS));
+
+
+        MailAccount account = new MailAccount();
+        account.setHost("smtp.qq.com");
+        account.setPort(25);
+        account.setAuth(true);
+        account.setFrom("296592231@qq.com");
+        account.setUser("296592231@qq.com");
+        account.setPass("wyqcrfzgduprbhec"); //密码
+        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", content, true);
     }
 
     public void batchInsertDetail() {
@@ -114,8 +133,10 @@ public class ShuangSeQiuJobService {
 
         YuCeDataDTO yuCeDataDTO = new YuCeDataDTO();
         int count = 0;
+        int flagNum = 4;
         for (int i = 0 ; i < ssqDetailInfoDOS.size() ;i++) {
-            if (count == 4) {
+            if (count == flagNum) {
+                flagNum = 5;
                 SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoDOS.get(i);
 
                 yuCeDataDTO.setHangLieRed1(getStr(yuCeDataDTO.getHangLieRed1(),ssqDetailInfoDO.getAQiu()));
@@ -173,6 +194,7 @@ public class ShuangSeQiuJobService {
                 yuCeDataDTO.setHangLieQiOuBi6(getStr(yuCeDataDTO.getHangLieQiOuBi6(),ssqDetailInfoDO.getDanshuangRatio()));
                 count = 0;
             }
+            count++;
         }
         return yuCeDataDTO;
     }
@@ -302,5 +324,15 @@ public class ShuangSeQiuJobService {
     }
 
 
+    public static void main(String[] args) {
+        MailAccount account = new MailAccount();
+        account.setHost("smtp.qq.com");
+        account.setPort(25);
+        account.setAuth(true);
+        account.setFrom("296592231@qq.com");
+        account.setUser("296592231@qq.com");
+        account.setPass("wyqcrfzgduprbhec"); //密码
+        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", "测试", true);
+    }
 
 }

@@ -62,9 +62,14 @@
     daxiao_ratio, danshuang_ratio,a_wuxing,b_wuxing,c_wuxing,d_wuxing,e_wuxing,f_wuxing
   </sql>
 
-  <select id="selectListByLimit" resultMap="BaseResultMap">
+  <select id="selectListByLimit" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
     <include refid="Base_Column_List" />
-        from ssq_detail_info order by issueno desc limit 0,200;
+        from ssq_detail_info 
+    <if test="issueno != null">
+      where
+      issueno &lt;= #{issueno}
+    </if>
+    order by issueno desc limit 0,200;
   </select>
 </mapper>
