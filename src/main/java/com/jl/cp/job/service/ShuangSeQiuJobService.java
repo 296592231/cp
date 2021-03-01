@@ -228,54 +228,36 @@ public class ShuangSeQiuJobService {
         content.append("<tr><td>行6列每五期数据，红球1，五行</td><td>"+yuCeDataDTO.getHangLieWuXing1()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球1，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang1()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球1，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，尾和</td><td>"+yuCeDataDTO.getHangLieWeiHe1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，大小比</td><td>"+yuCeDataDTO.getHangLieDaXiaoBi1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，奇偶比</td><td>"+yuCeDataDTO.getHangLieQiOuBi1()+"</td></tr>");
 
         content.append("<tr><td>6行6列每五期数据，红球2</td><td>"+yuCeDataDTO.getHangLieRed2()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球2，012路</td><td>"+yuCeDataDTO.getHangLieLuShu2()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球2，五行</td><td>"+yuCeDataDTO.getHangLieWuXing2()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球2，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang2()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球2，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，尾和</td><td>"+yuCeDataDTO.getHangLieWeiHe2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，大小比</td><td>"+yuCeDataDTO.getHangLieDaXiaoBi2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，奇偶比</td><td>"+yuCeDataDTO.getHangLieQiOuBi2()+"</td></tr>");
 
         content.append("<tr><td>6行6列每五期数据，红球3</td><td>"+yuCeDataDTO.getHangLieRed3()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球3，012路</td><td>"+yuCeDataDTO.getHangLieLuShu3()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球3，五行</td><td>"+yuCeDataDTO.getHangLieWuXing3()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球3，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang3()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球3，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，尾和</td><td>"+yuCeDataDTO.getHangLieWeiHe3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，大小比</td><td>"+yuCeDataDTO.getHangLieDaXiaoBi3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，奇偶比</td><td>"+yuCeDataDTO.getHangLieQiOuBi3()+"</td></tr>");
 
         content.append("<tr><td>6行6列每五期数据，红球4</td><td>"+yuCeDataDTO.getHangLieRed4()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球4，012路</td><td>"+yuCeDataDTO.getHangLieLuShu4()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球4，五行</td><td>"+yuCeDataDTO.getHangLieWuXing4()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球4，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang4()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球4，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，尾和</td><td>"+yuCeDataDTO.getHangLieWeiHe4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，大小比</td><td>"+yuCeDataDTO.getHangLieDaXiaoBi4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，奇偶比</td><td>"+yuCeDataDTO.getHangLieQiOuBi4()+"</td></tr>");
 
         content.append("<tr><td>6行6列每五期数据，红球5</td><td>"+yuCeDataDTO.getHangLieRed5()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球5，012路</td><td>"+yuCeDataDTO.getHangLieLuShu5()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球5，五行</td><td>"+yuCeDataDTO.getHangLieWuXing5()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球5，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang5()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球5，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，尾和</td><td>"+yuCeDataDTO.getHangLieWeiHe5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，大小比</td><td>"+yuCeDataDTO.getHangLieDaXiaoBi5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，奇偶比</td><td>"+yuCeDataDTO.getHangLieQiOuBi5()+"</td></tr>");
 
         content.append("<tr><td>6行6列每五期数据，红球6</td><td>"+yuCeDataDTO.getHangLieRed6()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球6，012路</td><td>"+yuCeDataDTO.getHangLieLuShu6()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球6，五行</td><td>"+yuCeDataDTO.getHangLieWuXing6()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球6，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang6()+"</td></tr>");
         content.append("<tr><td>行6列每五期数据，红球6，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，尾和</td><td>"+yuCeDataDTO.getHangLieWeiHe6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，大小比</td><td>"+yuCeDataDTO.getHangLieDaXiaoBi6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，奇偶比</td><td>"+yuCeDataDTO.getHangLieQiOuBi6()+"</td></tr>");
 
         content.append("</table></body></html>");
         return content.toString();

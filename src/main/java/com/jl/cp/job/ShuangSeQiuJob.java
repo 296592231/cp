@@ -46,7 +46,7 @@ public class ShuangSeQiuJob {
      * 增量更新双色球没期数据
      * Created by jl on 2021/2/27 12:25.
      */
-    @Scheduled(cron = "0 30 23 * * ?")
+    @Scheduled(cron = "0 13 14 * * 2,4,7")
     public void incrementalUpdate () {
         shuangSeQiuJobService.incrementalUpdate();
     }
