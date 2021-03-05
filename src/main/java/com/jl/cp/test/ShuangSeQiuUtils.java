@@ -79,14 +79,14 @@ public class ShuangSeQiuUtils {
     }
 
     //开奖号码
-    public final static int[] prizes = {2,8,14,23,25,32};
+    public final static int[] prizes = {10,15,17,25,31,32};
 
     //尾数和区间
     public final static int START_MANTISSA_SUM = 20;
     public final static int END_MANTISSA_SUM = 30;
 
     //和值区间
-    public final static int START_SUM = 70;
+    public final static int START_SUM = 80;
     public final static int END_SUM = 110;
 
     //三区间比（支持多个区间）
@@ -100,24 +100,29 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public final static int[][] LU_SHU = new int[][]
-            {{1,2},{1,0},{1,0},{1,0},{0,2},{0,1}};
+            {{1,2},{1,2},{1,2},{1,0},{1,2},{0,1}};
 
     //每个球的区间
     public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{1,7},{3,13,7},{6,7,9,10,12,13,18,19},{12,13,15,16,21,22},{15,17,21,23,27,29},
-                    {24,25,27,28,30,31}};
+            {{5,7},{7,8,10,11,14},{7,8,11,13,14,19},{13,15,19,21},{20,22,26},{28,30,31,33}};
 
     static {
         //三区间比设置（支持多个区间）
         THREE_SECTION.add(new int[]{2,2,2});
+        THREE_SECTION.add(new int[]{3,1,2});
         THREE_SECTION.add(new int[]{3,2,1});
+        THREE_SECTION.add(new int[]{1,3,2});
+        THREE_SECTION.add(new int[]{2,3,1});
+
         //单双比例（支持多个区间） 第一个是单  第二个是双
         SINGLE_AND_DOUBLE.add(new int[]{4,2});
         SINGLE_AND_DOUBLE.add(new int[]{3,3});
+        SINGLE_AND_DOUBLE.add(new int[]{2,4});
 
         //大小比例  第一个是大 第二个是小
         SIZE_RATIO.add(new int[]{2,4});
         SIZE_RATIO.add(new int[]{3,3});
+        SIZE_RATIO.add(new int[]{4,2});
     }
 
     /**
@@ -429,7 +434,7 @@ public class ShuangSeQiuUtils {
 
         //尾数和
         LinkedList<int[]> mantissaSumList = mantissaSum(resultList);
-        printlnList.addAll(getRandom(mantissaSumList,1));
+        //printlnList.addAll(getRandom(mantissaSumList,1));
 
         //在和值区间的双色求号码组
         LinkedList<int[]> sumList = getSumList(mantissaSumList);
@@ -449,7 +454,7 @@ public class ShuangSeQiuUtils {
 
         //大小比例
         LinkedList<int[]> luShu = luShu(sizeRatio);
-        printlnList.addAll(getRandom(luShu,5));
+        //printlnList.addAll(getRandom(luShu,5));
 
         //每个区间
         LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);

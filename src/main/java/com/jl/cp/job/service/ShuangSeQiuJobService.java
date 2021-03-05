@@ -89,8 +89,7 @@ public class ShuangSeQiuJobService {
             ssqBaseInfoMapper.insert(insertSsqBaseInfoDO);
             SsqDetailInfoDO ssqDetailInfoDO = getSsqDetailInfoDO(insertSsqBaseInfoDO.getNumber(),insertSsqBaseInfoDO.getIssueno());
             ssqDetailInfoMapper.insert(ssqDetailInfoDO);
-            getYuCeData(null);
-
+            getYuCeData(Long.valueOf(ssqDetailInfoDO.getIssueno()),ssqDetailInfoDO.getSanSection());
         }
 
     }
@@ -99,11 +98,18 @@ public class ShuangSeQiuJobService {
       * @Author LeJiang
       * @Remark 手动获取需要查看的数据集合
       */
-    public void getYuCeData (Long issueno) {
+    public void getYuCeData (Long issueno,String sanSection) {
         //查询数据发送邮件
         List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(issueno);
-        String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS));
 
+        //查看以往三区间分布
+        Map<String,Object> map = new HashMap<>();
+        map.put("issueno",issueno);
+        map.put("sanSection",sanSection);
+        List<SsqDetailInfoDO> sectionStaDos = ssqDetailInfoMapper.findListByIdAddOne(map);
+
+
+        String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS),getHistorySanSection(sectionStaDos));
 
         MailAccount account = new MailAccount();
         account.setHost("smtp.qq.com");
@@ -111,8 +117,36 @@ public class ShuangSeQiuJobService {
         account.setAuth(true);
         account.setFrom("296592231@qq.com");
         account.setUser("296592231@qq.com");
-        account.setPass("wyqcrfzgduprbhec"); //密码
+        //密码
+        account.setPass("wyqcrfzgduprbhec");
         MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", content, true);
+    }
+
+    /**
+     * 获取历史三区间分布
+     * @param
+     * @return
+     * Created by jl on 2021/3/5 13:53.
+     */
+    private YuCeDataDTO getHistorySanSection(List<SsqDetailInfoDO> sectionStaDos) {
+        if (CollectionUtil.isEmpty(sectionStaDos)) {
+            return null;
+        }
+        Collections.sort(sectionStaDos, new Comparator<SsqDetailInfoDO>() {
+            @Override
+            public int compare(SsqDetailInfoDO o1, SsqDetailInfoDO o2) {
+                return (o2.getIssueno() + "").compareTo((o1.getIssueno() + ""));
+            }
+        });
+        YuCeDataDTO yuCeDataDTO = new YuCeDataDTO();
+        for (SsqDetailInfoDO ssqDetailInfoDO : sectionStaDos) {
+            yuCeDataDTO.setDaXiaoBi(getStr(yuCeDataDTO.getDaXiaoBi(),ssqDetailInfoDO.getDaxiaoRatio()));
+            yuCeDataDTO.setHeZhi(getStr(yuCeDataDTO.getHeZhi(),ssqDetailInfoDO.getSumValue()));
+            yuCeDataDTO.setQiOuBi(getStr(yuCeDataDTO.getQiOuBi(),ssqDetailInfoDO.getDanshuangRatio()));
+            yuCeDataDTO.setWeiHe(getStr(yuCeDataDTO.getWeiHe(),ssqDetailInfoDO.getTailSumValue()));
+            yuCeDataDTO.setSanSection(getStr(yuCeDataDTO.getSanSection(),ssqDetailInfoDO.getSanSection()));
+        }
+        return yuCeDataDTO;
     }
 
     public void batchInsertDetail() {
@@ -143,55 +177,31 @@ public class ShuangSeQiuJobService {
                 yuCeDataDTO.setHangLieLuShu1(getStr(yuCeDataDTO.getHangLieLuShu1(),ssqDetailInfoDO.getAYushu()));
                 yuCeDataDTO.setHangLieWuXing1(getStr(yuCeDataDTO.getHangLieWuXing1(),ssqDetailInfoDO.getAWuxing()));
                 yuCeDataDTO.setHangLieDanShuang1(getStr(yuCeDataDTO.getHangLieDanShuang1(),ssqDetailInfoDO.getADanshuang()));
-                yuCeDataDTO.setHangLieHeZhi1(getStr(yuCeDataDTO.getHangLieHeZhi1(),ssqDetailInfoDO.getSumValue()));
-                yuCeDataDTO.setHangLieWeiHe1(getStr(yuCeDataDTO.getHangLieWeiHe1(),ssqDetailInfoDO.getTailSumValue()));
-                yuCeDataDTO.setHangLieDaXiaoBi1(getStr(yuCeDataDTO.getHangLieDaXiaoBi1(),ssqDetailInfoDO.getDaxiaoRatio()));
-                yuCeDataDTO.setHangLieQiOuBi1(getStr(yuCeDataDTO.getHangLieQiOuBi1(),ssqDetailInfoDO.getDanshuangRatio()));
 
                 yuCeDataDTO.setHangLieRed2(getStr(yuCeDataDTO.getHangLieRed2(),ssqDetailInfoDO.getBQiu()));
                 yuCeDataDTO.setHangLieLuShu2(getStr(yuCeDataDTO.getHangLieLuShu2(),ssqDetailInfoDO.getBYushu()));
                 yuCeDataDTO.setHangLieWuXing2(getStr(yuCeDataDTO.getHangLieWuXing2(),ssqDetailInfoDO.getBWuxing()));
                 yuCeDataDTO.setHangLieDanShuang2(getStr(yuCeDataDTO.getHangLieDanShuang2(),ssqDetailInfoDO.getBDanshuang()));
-                yuCeDataDTO.setHangLieHeZhi2(getStr(yuCeDataDTO.getHangLieHeZhi2(),ssqDetailInfoDO.getSumValue()));
-                yuCeDataDTO.setHangLieWeiHe2(getStr(yuCeDataDTO.getHangLieWeiHe2(),ssqDetailInfoDO.getTailSumValue()));
-                yuCeDataDTO.setHangLieDaXiaoBi2(getStr(yuCeDataDTO.getHangLieDaXiaoBi2(),ssqDetailInfoDO.getDaxiaoRatio()));
-                yuCeDataDTO.setHangLieQiOuBi2(getStr(yuCeDataDTO.getHangLieQiOuBi2(),ssqDetailInfoDO.getDanshuangRatio()));
 
                 yuCeDataDTO.setHangLieRed3(getStr(yuCeDataDTO.getHangLieRed3(),ssqDetailInfoDO.getCQiu()));
                 yuCeDataDTO.setHangLieLuShu3(getStr(yuCeDataDTO.getHangLieLuShu3(),ssqDetailInfoDO.getCYushu()));
                 yuCeDataDTO.setHangLieWuXing3(getStr(yuCeDataDTO.getHangLieWuXing3(),ssqDetailInfoDO.getCWuxing()));
                 yuCeDataDTO.setHangLieDanShuang3(getStr(yuCeDataDTO.getHangLieDanShuang3(),ssqDetailInfoDO.getCDanshuang()));
-                yuCeDataDTO.setHangLieHeZhi3(getStr(yuCeDataDTO.getHangLieHeZhi3(),ssqDetailInfoDO.getSumValue()));
-                yuCeDataDTO.setHangLieWeiHe3(getStr(yuCeDataDTO.getHangLieWeiHe3(),ssqDetailInfoDO.getTailSumValue()));
-                yuCeDataDTO.setHangLieDaXiaoBi3(getStr(yuCeDataDTO.getHangLieDaXiaoBi3(),ssqDetailInfoDO.getDaxiaoRatio()));
-                yuCeDataDTO.setHangLieQiOuBi3(getStr(yuCeDataDTO.getHangLieQiOuBi3(),ssqDetailInfoDO.getDanshuangRatio()));
 
                 yuCeDataDTO.setHangLieRed4(getStr(yuCeDataDTO.getHangLieRed4(),ssqDetailInfoDO.getDQiu()));
                 yuCeDataDTO.setHangLieLuShu4(getStr(yuCeDataDTO.getHangLieLuShu4(),ssqDetailInfoDO.getDYushu()));
                 yuCeDataDTO.setHangLieWuXing4(getStr(yuCeDataDTO.getHangLieWuXing4(),ssqDetailInfoDO.getDWuxing()));
                 yuCeDataDTO.setHangLieDanShuang4(getStr(yuCeDataDTO.getHangLieDanShuang4(),ssqDetailInfoDO.getDDanshuang()));
-                yuCeDataDTO.setHangLieHeZhi4(getStr(yuCeDataDTO.getHangLieHeZhi4(),ssqDetailInfoDO.getSumValue()));
-                yuCeDataDTO.setHangLieWeiHe4(getStr(yuCeDataDTO.getHangLieWeiHe4(),ssqDetailInfoDO.getTailSumValue()));
-                yuCeDataDTO.setHangLieDaXiaoBi4(getStr(yuCeDataDTO.getHangLieDaXiaoBi4(),ssqDetailInfoDO.getDaxiaoRatio()));
-                yuCeDataDTO.setHangLieQiOuBi4(getStr(yuCeDataDTO.getHangLieQiOuBi4(),ssqDetailInfoDO.getDanshuangRatio()));
 
                 yuCeDataDTO.setHangLieRed5(getStr(yuCeDataDTO.getHangLieRed5(),ssqDetailInfoDO.getEQiu()));
                 yuCeDataDTO.setHangLieLuShu5(getStr(yuCeDataDTO.getHangLieLuShu5(),ssqDetailInfoDO.getEYushu()));
                 yuCeDataDTO.setHangLieWuXing5(getStr(yuCeDataDTO.getHangLieWuXing5(),ssqDetailInfoDO.getEWuxing()));
                 yuCeDataDTO.setHangLieDanShuang5(getStr(yuCeDataDTO.getHangLieDanShuang5(),ssqDetailInfoDO.getEDanshuang()));
-                yuCeDataDTO.setHangLieHeZhi5(getStr(yuCeDataDTO.getHangLieHeZhi5(),ssqDetailInfoDO.getSumValue()));
-                yuCeDataDTO.setHangLieWeiHe5(getStr(yuCeDataDTO.getHangLieWeiHe5(),ssqDetailInfoDO.getTailSumValue()));
-                yuCeDataDTO.setHangLieDaXiaoBi5(getStr(yuCeDataDTO.getHangLieDaXiaoBi5(),ssqDetailInfoDO.getDaxiaoRatio()));
-                yuCeDataDTO.setHangLieQiOuBi5(getStr(yuCeDataDTO.getHangLieQiOuBi5(),ssqDetailInfoDO.getDanshuangRatio()));
 
                 yuCeDataDTO.setHangLieRed6(getStr(yuCeDataDTO.getHangLieRed6(),ssqDetailInfoDO.getFQiu()));
                 yuCeDataDTO.setHangLieLuShu6(getStr(yuCeDataDTO.getHangLieLuShu6(),ssqDetailInfoDO.getFYushu()));
                 yuCeDataDTO.setHangLieWuXing6(getStr(yuCeDataDTO.getHangLieWuXing6(),ssqDetailInfoDO.getFWuxing()));
                 yuCeDataDTO.setHangLieDanShuang6(getStr(yuCeDataDTO.getHangLieDanShuang6(),ssqDetailInfoDO.getFDanshuang()));
-                yuCeDataDTO.setHangLieHeZhi6(getStr(yuCeDataDTO.getHangLieHeZhi6(),ssqDetailInfoDO.getSumValue()));
-                yuCeDataDTO.setHangLieWeiHe6(getStr(yuCeDataDTO.getHangLieWeiHe6(),ssqDetailInfoDO.getTailSumValue()));
-                yuCeDataDTO.setHangLieDaXiaoBi6(getStr(yuCeDataDTO.getHangLieDaXiaoBi6(),ssqDetailInfoDO.getDaxiaoRatio()));
-                yuCeDataDTO.setHangLieQiOuBi6(getStr(yuCeDataDTO.getHangLieQiOuBi6(),ssqDetailInfoDO.getDanshuangRatio()));
                 count = 0;
             }
             count++;
@@ -213,7 +223,7 @@ public class ShuangSeQiuJobService {
         return str1 + "," + str2;
     }
 
-    public String getContent (YuCeDataDTO yuCeDataDTO) {
+    public String getContent (YuCeDataDTO yuCeDataDTO,YuCeDataDTO historyYuCeDataDTO) {
         StringBuilder content = new StringBuilder();
         content.append("<html><head><style type=\"text/css\">");
         content.append("table{border-collapse: collapse;text-align: center;table-layout: fixed;width: 1080px;}");
@@ -223,44 +233,71 @@ public class ShuangSeQiuJobService {
         content.append("table tr:nth-child(even){background: #F5FAFA;}");
         content.append("</style></head><body>");
         content.append("<h3>拉取结果汇总</h3><table style=\"text-align: left;width: 500px;\">");
-        content.append("<tr><td>6行6列每五期数据，红球1</td><td>"+yuCeDataDTO.getHangLieRed1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，012路</td><td>"+yuCeDataDTO.getHangLieLuShu1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，五行</td><td>"+yuCeDataDTO.getHangLieWuXing1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang1()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi1()+"</td></tr>");
+        content.append("<tr><td>6行6列每五期数据，红球1</td><td>"+printConvert(yuCeDataDTO.getHangLieRed1()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球1，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu1()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球1，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing1()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球1，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang1()).replaceAll(",","，")+"</td></tr>");
 
-        content.append("<tr><td>6行6列每五期数据，红球2</td><td>"+yuCeDataDTO.getHangLieRed2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，012路</td><td>"+yuCeDataDTO.getHangLieLuShu2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，五行</td><td>"+yuCeDataDTO.getHangLieWuXing2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang2()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi2()+"</td></tr>");
+        content.append("<tr><td>6行6列每五期数据，红球2</td><td>"+printConvert(yuCeDataDTO.getHangLieRed2()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球2，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu2()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球2，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing2()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球2，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang2()).replaceAll(",","，")+"</td></tr>");
 
-        content.append("<tr><td>6行6列每五期数据，红球3</td><td>"+yuCeDataDTO.getHangLieRed3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，012路</td><td>"+yuCeDataDTO.getHangLieLuShu3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，五行</td><td>"+yuCeDataDTO.getHangLieWuXing3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang3()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi3()+"</td></tr>");
+        content.append("<tr><td>6行6列每五期数据，红球3</td><td>"+printConvert(yuCeDataDTO.getHangLieRed3()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球3，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu3()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球3，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing3()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球3，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang3()).replaceAll(",","，")+"</td></tr>");
 
-        content.append("<tr><td>6行6列每五期数据，红球4</td><td>"+yuCeDataDTO.getHangLieRed4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，012路</td><td>"+yuCeDataDTO.getHangLieLuShu4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，五行</td><td>"+yuCeDataDTO.getHangLieWuXing4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang4()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi4()+"</td></tr>");
+        content.append("<tr><td>6行6列每五期数据，红球4</td><td>"+printConvert(yuCeDataDTO.getHangLieRed4()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球4，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu4()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球4，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing4()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球4，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang4()).replaceAll(",","，")+"</td></tr>");
 
-        content.append("<tr><td>6行6列每五期数据，红球5</td><td>"+yuCeDataDTO.getHangLieRed5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，012路</td><td>"+yuCeDataDTO.getHangLieLuShu5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，五行</td><td>"+yuCeDataDTO.getHangLieWuXing5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang5()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi5()+"</td></tr>");
+        content.append("<tr><td>6行6列每五期数据，红球5</td><td>"+printConvert(yuCeDataDTO.getHangLieRed5()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球5，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu5()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球5，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing5()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球5，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang5()).replaceAll(",","，")+"</td></tr>");
 
-        content.append("<tr><td>6行6列每五期数据，红球6</td><td>"+yuCeDataDTO.getHangLieRed6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，012路</td><td>"+yuCeDataDTO.getHangLieLuShu6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，五行</td><td>"+yuCeDataDTO.getHangLieWuXing6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，单双</td><td>"+yuCeDataDTO.getHangLieDanShuang6()+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，和值</td><td>"+yuCeDataDTO.getHangLieHeZhi6()+"</td></tr>");
+        content.append("<tr><td>6行6列每五期数据，红球6</td><td>"+printConvert(yuCeDataDTO.getHangLieRed6()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球6，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu6()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球6，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing6()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>行6列每五期数据，红球6，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang6()).replaceAll(",","，")+"</td></tr>");
+
+
+        content.append("<tr><td>历史数据分布，和值</td><td>"+printConvert(historyYuCeDataDTO.getHeZhi()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>历史数据分布，尾和</td><td>"+printConvert(historyYuCeDataDTO.getWeiHe()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>历史数据分布，大小比</td><td>"+printConvert(historyYuCeDataDTO.getDaXiaoBi()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>历史数据分布，奇偶比</td><td>"+printConvert(historyYuCeDataDTO.getQiOuBi()).replaceAll(",","，")+"</td></tr>");
+        content.append("<tr><td>历史数据分布，三区间比</td><td>"+printConvert(historyYuCeDataDTO.getSanSection()).replaceAll(",","，")+"</td></tr>");
 
         content.append("</table></body></html>");
         return content.toString();
+    }
+
+    /**
+     * 将从右至左看改成从左至右看
+     * @param
+     * @return
+     * Created by jl on 2021/3/5 14:20.
+     */
+    public String printConvert (String str) {
+        if (StringUtils.isBlank(str)) {
+            return str;
+        }
+
+        String[] strs = str.split(",");
+
+        StringBuffer sb = new StringBuffer();
+        for (int i = strs.length-1 ; i >= 0 ;i--) {
+            if (StringUtils.isBlank(sb.toString())) {
+                sb.append(strs[i]);
+            } else {
+                sb.append(","+strs[i]);
+            }
+        }
+
+        return sb.toString();
+
     }
 
 
@@ -307,14 +344,17 @@ public class ShuangSeQiuJobService {
 
 
     public static void main(String[] args) {
-        MailAccount account = new MailAccount();
-        account.setHost("smtp.qq.com");
-        account.setPort(25);
-        account.setAuth(true);
-        account.setFrom("296592231@qq.com");
-        account.setUser("296592231@qq.com");
-        account.setPass("wyqcrfzgduprbhec"); //密码
-        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", "测试", true);
+//        MailAccount account = new MailAccount();
+//        account.setHost("smtp.qq.com");
+//        account.setPort(25);
+//        account.setAuth(true);
+//        account.setFrom("296592231@qq.com");
+//        account.setUser("296592231@qq.com");
+//        account.setPass("wyqcrfzgduprbhec"); //密码
+//        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", "测试", true);
+
+        //System.out.println(printConvert("01,02,03,04,05,06"));
     }
+
 
 }

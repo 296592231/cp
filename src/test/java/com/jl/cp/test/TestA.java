@@ -1,6 +1,7 @@
 package com.jl.cp.test;
 
 import com.jl.cp.job.service.ShuangSeQiuJobService;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,6 @@ public class TestA {
 
     @org.junit.Test
     public void test() {
-        shuangSeQiuJobService.getYuCeData(2021018L);
+        shuangSeQiuJobService.getYuCeData(2021022L,"1:2:3");
     }
 }

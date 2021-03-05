@@ -72,4 +72,14 @@
     </if>
     order by issueno desc limit 0,200;
   </select>
+
+
+  <select id="findListByIdAddOne" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ssq_detail_info
+    where
+    id in (select id+1 from ssq_detail_info where issueno &lt;= #{issueno} and san_section = #{sanSection})
+    order by issueno desc limit 0,200;
+  </select>
 </mapper>
