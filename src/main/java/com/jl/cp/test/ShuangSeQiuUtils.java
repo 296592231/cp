@@ -82,12 +82,12 @@ public class ShuangSeQiuUtils {
     public final static int[] prizes = {10,15,17,25,31,32};
 
     //尾数和区间
-    public final static int START_MANTISSA_SUM = 20;
-    public final static int END_MANTISSA_SUM = 30;
+    public final static int START_MANTISSA_SUM = 25;
+    public final static int END_MANTISSA_SUM = 35;
 
     //和值区间
-    public final static int START_SUM = 80;
-    public final static int END_SUM = 110;
+    public final static int START_SUM = 90;
+    public final static int END_SUM = 135;
 
     //三区间比（支持多个区间）
     public final static List<int[]> THREE_SECTION = new ArrayList<>();
@@ -100,18 +100,22 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public final static int[][] LU_SHU = new int[][]
-            {{1,2},{1,2},{1,2},{1,0},{1,2},{0,1}};
+            {{0,1},{0,2},{0,1},{0,2},{0,1},{0,2}};
 
     //每个球的区间
     public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{5,7},{7,8,10,11,14},{7,8,11,13,14,19},{13,15,19,21},{20,22,26},{28,30,31,33}};
+            {{1,3,4,6,7,9},{5,6,8,9,11,12,14},{7,9,10,12,13,15,16,18},{15,17,18,20,21,23,24},{21,22,24,25,27,28,30,31},{24,26,27,29,30,32,33}};
+
+    //精选号码
+    public final static int[][] SELECTED = new int[][]
+            {{1,3},{6,8,14},{10,12,16,18},{18,20,24,26},{22,24,28,30},{27,29,33}};
 
     static {
         //三区间比设置（支持多个区间）
         THREE_SECTION.add(new int[]{2,2,2});
-        THREE_SECTION.add(new int[]{3,1,2});
-        THREE_SECTION.add(new int[]{3,2,1});
+        THREE_SECTION.add(new int[]{2,1,3});
         THREE_SECTION.add(new int[]{1,3,2});
+        THREE_SECTION.add(new int[]{3,2,1});
         THREE_SECTION.add(new int[]{2,3,1});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
@@ -324,6 +328,78 @@ public class ShuangSeQiuUtils {
         return resultList;
     }
 
+
+    /**
+     * @Author LeJiang
+     * @CreateOn 2021/1/9 ^ 下午8:51
+     * @Parameter
+     * @Remark 精选号码过滤
+     */
+    public static LinkedList<int[]> selected(LinkedList<int[]> paramList) {
+        if (paramList == null || paramList.size() < 1) {
+            return null;
+        }
+        LinkedList<int[]> resultList = new LinkedList<>();
+        int pubIndex = 0;
+        for (int[] ints :paramList) {
+
+            boolean index0Flag = false;
+            boolean index1Flag = false;
+            boolean index2Flag = false;
+            boolean index3Flag = false;
+            boolean index4Flag = false;
+            boolean index5Flag = false;
+            int[] index0 = SELECTED[0];
+            for (int i : index0) {
+                if (ints[0] == i) {
+                    index0Flag = true;
+                }
+            }
+
+            int[] index1 = SELECTED[1];
+            for (int i : index1) {
+                if (ints[1] == i) {
+                    index1Flag = true;
+                }
+            }
+
+            int[] index2 = SELECTED[2];
+            for (int i : index2) {
+                if (ints[2] == i) {
+                    index2Flag = true;
+                }
+            }
+
+            int[] index3 = SELECTED[3];
+            for (int i : index3) {
+                if (ints[3] == i) {
+                    index3Flag = true;
+                }
+            }
+
+            int[] index4 = SELECTED[4];
+            for (int i : index4) {
+                if (ints[4] == i) {
+                    index4Flag = true;
+                }
+            }
+
+            int[] index5 = SELECTED[5];
+            for (int i : index5) {
+                if (ints[5] == i) {
+                    index5Flag = true;
+                }
+            }
+
+            if (index0Flag && index1Flag && index2Flag && index3Flag && index4Flag && index5Flag) {
+                resultList.add(ints);
+            }
+        }
+        System.out.println("精选号码存在的数据总共："+resultList.size() + "条。");
+        return resultList;
+    }
+
+
     /**
      * @Author LeJiang
      * @CreateOn 2021/1/9 ^ 下午8:51
@@ -453,12 +529,16 @@ public class ShuangSeQiuUtils {
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(sizeRatio);
+        LinkedList<int[]> luShu = luShu(threeSectionList);
         //printlnList.addAll(getRandom(luShu,5));
 
         //每个区间
         LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
-        printlnList.addAll(getRandom(eachNumberRangeList,6));
+        printlnList.addAll(getRandom(eachNumberRangeList,5));
+
+        //每个区间
+        LinkedList<int[]> selectedList = selected(luShu);
+        printlnList.addAll(getRandom(selectedList,5));
 
         System.out.println(new Gson().toJson(printlnList));
 

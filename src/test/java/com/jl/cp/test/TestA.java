@@ -28,4 +28,14 @@ public class TestA {
     public void test() {
         shuangSeQiuJobService.getYuCeData(2021022L,"1:2:3");
     }
+
+    @org.junit.Test
+    public void yuCeBlue() {
+        long issueno = 2021049;
+        for (int i = 1 ; i < 21 ; i++  ) {
+            System.out.println(shuangSeQiuJobService.yuCeBlue(String.valueOf(issueno)));
+            issueno = issueno-1;
+        }
+
+    }
 }

@@ -14,6 +14,7 @@ import com.jl.cp.coverter.SsqBaseInfoDOCoverter;
 import com.jl.cp.dto.YuCeDataDTO;
 import com.jl.cp.entity.SsqBaseInfoDO;
 import com.jl.cp.entity.SsqDetailInfoDO;
+import com.jl.cp.entity.biz.SsqBaseInfoBizDO;
 import com.jl.cp.mapper.SsqBaseInfoMapper;
 import com.jl.cp.mapper.SsqDetailInfoMapper;
 import com.jl.cp.utils.HttpUtil;
@@ -109,7 +110,7 @@ public class ShuangSeQiuJobService {
         List<SsqDetailInfoDO> sectionStaDos = ssqDetailInfoMapper.findListByIdAddOne(map);
 
 
-        String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS),getHistorySanSection(sectionStaDos));
+        String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS),getHistorySanSection(sectionStaDos),yuCeBlue(issueno.toString()));
 
         MailAccount account = new MailAccount();
         account.setHost("smtp.qq.com");
@@ -120,6 +121,52 @@ public class ShuangSeQiuJobService {
         //密码
         account.setPass("wyqcrfzgduprbhec");
         MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", content, true);
+    }
+
+    /**
+     * 篮球预测
+     * @param issueno 当前期数
+     * @return
+     * Created by jl on 2021/5/8 15:23.
+     */
+    public String yuCeBlue (String issueno) {
+        //查询数据是否存在
+        SsqBaseInfoDO querySsqBaseInfoDO = new SsqBaseInfoDO();
+        querySsqBaseInfoDO.setIssueno(issueno);
+        SsqBaseInfoDO ssqBaseInfoDO = ssqBaseInfoMapper.selectOne(querySsqBaseInfoDO);
+        if (ssqBaseInfoDO != null) {
+            Long id = ssqBaseInfoDO.getId() -100L;
+            SsqBaseInfoDO querySsqBaseInfoDO1 = new SsqBaseInfoDO();
+            querySsqBaseInfoDO1.setId(id);
+            SsqBaseInfoDO restSsqBaseInfoDO = ssqBaseInfoMapper.selectOne(querySsqBaseInfoDO1);
+            if (restSsqBaseInfoDO!= null) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("statIssueno",restSsqBaseInfoDO.getIssueno());
+                map.put("endIssueno",issueno);
+                map.put("refernumber",ssqBaseInfoDO.getRefernumber());
+                List<SsqBaseInfoBizDO> ssqBaseInfoDOS = ssqBaseInfoMapper.findListByMap(map);
+                if (CollectionUtil.isNotEmpty(ssqBaseInfoDOS)) {
+                    StringBuffer blueRule = new StringBuffer();
+                    StringBuffer blueNumberRule = new StringBuffer();
+                    ssqBaseInfoDOS.forEach(ssqBaseInfoBizDO -> {
+                        String s = ssqBaseInfoBizDO.getRefernumber();
+                        String s1 = ssqBaseInfoBizDO.getNumber();
+                        if (StringUtils.isBlank(blueRule.toString())) {
+                            blueRule.append(s);
+                        } else {
+                            blueRule.append("," + s);
+                        }
+                        if (StringUtils.isBlank(blueNumberRule.toString())) {
+                            blueNumberRule.append(s1);
+                        } else {
+                            blueNumberRule.append("," + s1);
+                        }
+                    });
+                    return issueno + "：" + blueRule.toString() + "--" + blueNumberRule.toString();
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -223,7 +270,7 @@ public class ShuangSeQiuJobService {
         return str1 + "," + str2;
     }
 
-    public String getContent (YuCeDataDTO yuCeDataDTO,YuCeDataDTO historyYuCeDataDTO) {
+    public String getContent (YuCeDataDTO yuCeDataDTO,YuCeDataDTO historyYuCeDataDTO,String yuCeBlue) {
         StringBuilder content = new StringBuilder();
         content.append("<html><head><style type=\"text/css\">");
         content.append("table{border-collapse: collapse;text-align: center;table-layout: fixed;width: 1080px;}");
@@ -269,6 +316,10 @@ public class ShuangSeQiuJobService {
         content.append("<tr><td>历史数据分布，大小比</td><td>"+printConvert(historyYuCeDataDTO.getDaXiaoBi()).replaceAll(",","，")+"</td></tr>");
         content.append("<tr><td>历史数据分布，奇偶比</td><td>"+printConvert(historyYuCeDataDTO.getQiOuBi()).replaceAll(",","，")+"</td></tr>");
         content.append("<tr><td>历史数据分布，三区间比</td><td>"+printConvert(historyYuCeDataDTO.getSanSection()).replaceAll(",","，")+"</td></tr>");
+
+        if (StringUtils.isNotBlank(yuCeBlue)) {
+            content.append("<tr><td>篮球预测</td><td>"+yuCeBlue+"</td></tr>");
+        }
 
         content.append("</table></body></html>");
         return content.toString();

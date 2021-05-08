@@ -21,4 +21,11 @@
     issueno, number, saleamount, totalmoney,prize
   </sql>
 
+  <select id="findListByMap" parameterType="map" resultType="com.jl.cp.entity.biz.SsqBaseInfoBizDO">
+    SELECT refernumber,COUNT(1) as 'number' FROM ssq_base_info WHERE id IN (
+    SELECT id+1 FROM `ssq_base_info` WHERE refernumber = #{refernumber}
+    ) AND issueno &gt;= #{statIssueno} AND issueno &lt;= #{endIssueno}
+    GROUP BY refernumber ORDER BY issueno DESC;
+  </select>
+
 </mapper>
