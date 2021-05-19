@@ -82,12 +82,12 @@ public class ShuangSeQiuUtils {
     public final static int[] prizes = {10,15,17,25,31,32};
 
     //尾数和区间
-    public final static int START_MANTISSA_SUM = 25;
-    public final static int END_MANTISSA_SUM = 35;
+    public final static int START_MANTISSA_SUM = 20;
+    public final static int END_MANTISSA_SUM = 36;
 
     //和值区间
-    public final static int START_SUM = 90;
-    public final static int END_SUM = 135;
+    public final static int START_SUM = 80;
+    public final static int END_SUM = 130;
 
     //三区间比（支持多个区间）
     public final static List<int[]> THREE_SECTION = new ArrayList<>();
@@ -100,23 +100,23 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public final static int[][] LU_SHU = new int[][]
-            {{0,1},{0,2},{0,1},{0,2},{0,1},{0,2}};
+            {{0,2},{1,0},{2,1},{0,2},{1,2},{0,2}};
 
     //每个球的区间
     public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{1,3,4,6,7,9},{5,6,8,9,11,12,14},{7,9,10,12,13,15,16,18},{15,17,18,20,21,23,24},{21,22,24,25,27,28,30,31},{24,26,27,29,30,32,33}};
+            {{2,3,6,8,9},{3,4,6,7,9,10,12,13,15,16},{8,10,11,13,14,16,17,19},{15,17,18,20,21,23,24},{19,20,22,23,25,26,28,29},{24,26,27,29,30,32,33}};
 
     //精选号码
     public final static int[][] SELECTED = new int[][]
-            {{1,3},{6,8,14},{10,12,16,18},{18,20,24,26},{22,24,28,30},{27,29,33}};
+            {{2,6,8},{3,4,9,12,13},{14,13,16,17,11},{15,17,21,23,24,26},{22,23,26,28},{26,27,29,30,32,33}};
 
     static {
         //三区间比设置（支持多个区间）
         THREE_SECTION.add(new int[]{2,2,2});
-        THREE_SECTION.add(new int[]{2,1,3});
         THREE_SECTION.add(new int[]{1,3,2});
         THREE_SECTION.add(new int[]{3,2,1});
-        THREE_SECTION.add(new int[]{2,3,1});
+        THREE_SECTION.add(new int[]{1,2,3});
+        THREE_SECTION.add(new int[]{2,1,3});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
         SINGLE_AND_DOUBLE.add(new int[]{4,2});

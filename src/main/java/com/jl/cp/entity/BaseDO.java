@@ -33,15 +33,6 @@ public class BaseDO implements Serializable {
     /** 创建人 */
     private String            createUser;
 
-    /** 修改日期 */
-    private Date              updateTime;
-
-    /** 更新人 */
-    private String            updateUser;
-
-    /** 版本号 */
-    private Long              version;
-
     /**
     * 初始化 新增时间、新增人与版本号
     * Created by kz on 2019/2/15 16:19.
@@ -50,7 +41,6 @@ public class BaseDO implements Serializable {
         Date date = new Date();
         this.setCreateTime(date);
         this.setCreateUser("SYSTEM");
-        this.setVersion(0L);
     }
 
     /**
@@ -61,9 +51,6 @@ public class BaseDO implements Serializable {
         Date date = new Date();
         this.setCreateTime(date);
         this.setCreateUser("SYSTEM");
-        this.setUpdateTime(date);
-        this.setUpdateUser("SYSTEM");
-        this.setVersion(0L);
     }
     
     /**
@@ -72,11 +59,9 @@ public class BaseDO implements Serializable {
     */
     public void initInputDate() {
         this.setCreateTime(new Date());
-        this.setVersion(0L);
     }
 
     public void initUpdateBy() {
         this.setCreateUser("SYSTEM");
-        this.setUpdateTime(new Date());
     }
 }

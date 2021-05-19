@@ -4,10 +4,7 @@
   <resultMap id="BaseResultMap" type="com.jl.cp.entity.SsqDetailInfoDO" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
     <result column="issueno" property="issueno" jdbcType="VARCHAR" />
     <result column="a_qiu" property="aQiu" jdbcType="VARCHAR" />
     <result column="a_pianyi" property="aPianyi" jdbcType="VARCHAR" />
@@ -54,7 +51,7 @@
     <result column="danshuang_ratio" property="danshuangRatio" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, create_time, create_user, update_time, update_user, version,issueno, a_qiu, a_pianyi,
+    id, create_time, create_user, issueno, a_qiu, a_pianyi,
     a_daxiao, a_danshuang, a_yushu, b_qiu, b_pianyi, b_daxiao, b_danshuang, b_yushu, 
     c_qiu, c_pianyi, c_daxiao, c_danshuang, c_yushu, d_qiu, d_pianyi, d_daxiao, d_danshuang, 
     d_yushu, e_qiu, e_pianyi, e_daxiao, e_danshuang, e_yushu, f_qiu, f_pianyi, f_daxiao, 
@@ -62,7 +59,7 @@
     daxiao_ratio, danshuang_ratio,a_wuxing,b_wuxing,c_wuxing,d_wuxing,e_wuxing,f_wuxing
   </sql>
 
-  <select id="selectListByLimit" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectListByLimit" parameterType="map" resultMap="BaseResultMap">
         select
     <include refid="Base_Column_List" />
         from ssq_detail_info 
@@ -79,7 +76,16 @@
     <include refid="Base_Column_List" />
     from ssq_detail_info
     where
-    id in (select id+1 from ssq_detail_info where issueno &lt;= #{issueno} and san_section = #{sanSection})
-    order by issueno desc limit 0,200;
+    id in (select id+1 from ssq_detail_info
+    <where>
+      <if test="issueno != null and issueno != ''">
+        and issueno &lt;= #{issueno}
+      </if>
+      <if test="columnValue != null and columnValue != ''" >
+        and  <![CDATA[ ${columnName} ]]> = #{columnValue}
+      </if>
+    </where>
+    )
+    order by issueno desc limit 0,15;
   </select>
 </mapper>

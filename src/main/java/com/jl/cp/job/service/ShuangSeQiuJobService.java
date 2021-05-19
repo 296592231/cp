@@ -11,12 +11,15 @@ import cn.hutool.extra.mail.MailUtil;
 import com.google.gson.Gson;
 import com.jl.cp.constants.Constants;
 import com.jl.cp.coverter.SsqBaseInfoDOCoverter;
+import com.jl.cp.dto.BILieDto;
 import com.jl.cp.dto.YuCeDataDTO;
 import com.jl.cp.entity.SsqBaseInfoDO;
 import com.jl.cp.entity.SsqDetailInfoDO;
+import com.jl.cp.entity.SsqYuCeDO;
 import com.jl.cp.entity.biz.SsqBaseInfoBizDO;
 import com.jl.cp.mapper.SsqBaseInfoMapper;
 import com.jl.cp.mapper.SsqDetailInfoMapper;
+import com.jl.cp.mapper.SsqYuCeMapper;
 import com.jl.cp.utils.HttpUtil;
 import com.jl.cp.vo.HttpConverterResponseVO.SsqBaseInfoResponseVO;
 import com.jl.cp.vo.HttpConverterResponseVO.SsqJsBaseResponseVO;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author jl
@@ -40,6 +44,9 @@ public class ShuangSeQiuJobService {
 
     @Autowired
     private SsqDetailInfoMapper ssqDetailInfoMapper;
+
+    @Autowired
+    private SsqYuCeMapper ssqYuCeMapper;
 
     public void initSsqData() {
         //获取1000期彩票数据
@@ -90,7 +97,7 @@ public class ShuangSeQiuJobService {
             ssqBaseInfoMapper.insert(insertSsqBaseInfoDO);
             SsqDetailInfoDO ssqDetailInfoDO = getSsqDetailInfoDO(insertSsqBaseInfoDO.getNumber(),insertSsqBaseInfoDO.getIssueno());
             ssqDetailInfoMapper.insert(ssqDetailInfoDO);
-            getYuCeData(Long.valueOf(ssqDetailInfoDO.getIssueno()),ssqDetailInfoDO.getSanSection());
+            //getYuCeData(Long.valueOf(ssqDetailInfoDO.getIssueno()),ssqDetailInfoDO.getSanSection());
         }
 
     }
@@ -101,7 +108,9 @@ public class ShuangSeQiuJobService {
       */
     public void getYuCeData (Long issueno,String sanSection) {
         //查询数据发送邮件
-        List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(issueno);
+        Map<String,Object> paremMap = new HashMap<>();
+        paremMap.put("issueno",issueno);
+        List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(paremMap);
 
         //查看以往三区间分布
         Map<String,Object> map = new HashMap<>();
@@ -392,6 +401,126 @@ public class ShuangSeQiuJobService {
         String json = HttpUtil.postForm(map,true, Constants.URL_HISTORY,"UTF-8");
         return new Gson().fromJson(json, SsqJsBaseResponseVO.class);
     }
+
+
+    /**
+     * 双色球预测
+     * @param
+     * @return
+     * Created by jl on 2021/5/19 14:44.
+     */
+    public void forecast () {
+
+        Map<String,Object> paremMap = new HashMap<>();
+        List<SsqDetailInfoDO> allSsqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(paremMap);
+
+        for (int i = 0 ; i< allSsqDetailInfoDOS.size() ; i++) {
+            List<SsqDetailInfoDO> all = getAppointSizeData(allSsqDetailInfoDOS,i,15);
+            SsqDetailInfoDO allDO = allSsqDetailInfoDOS.get(i);
+            List<BILieDto> allBiLieDto = getBilie(all,1);
+
+            Map<String,Object> map = new HashMap<>();
+            map.put("columnName","a_qiu");
+            map.put("columnValue",allDO.getAQiu());
+            List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.findListByIdAddOne(map);
+            List<SsqDetailInfoDO> histryDOS = getAppointSizeData(ssqDetailInfoDOS,0,15);
+            List<BILieDto> histryBiLieDto = getBilie(histryDOS,1);
+
+            //获取最大的两个值
+            allBiLieDto.addAll(histryBiLieDto);
+            Collections.sort(allBiLieDto, (BILieDto h1, BILieDto h2) -> h2.getNum() - h1.getNum());
+            BILieDto zBILieDto = allBiLieDto.get(0);
+            BILieDto oBILieDto = allBiLieDto.get(1);
+            if (zBILieDto.getYuShu().equals(oBILieDto.getYuShu())) {
+                oBILieDto = allBiLieDto.get(2);
+            }
+            SsqYuCeDO ssqYuCeDO = new SsqYuCeDO();
+            ssqYuCeDO.setYuCeData(zBILieDto.getYuShu() + "," + oBILieDto.getYuShu());
+            ssqYuCeDO.setOdds(allDO.getIssueno());
+            ssqYuCeMapper.insert(ssqYuCeDO);
+        }
+    }
+
+    /**
+     * 获取多少期数据
+     * @param ssqDetailInfoDOS 从哪里获取数据
+     * @param index 当前索引位置
+     * @param size 获取多少期数据
+     * @return 返回传入大小的数据集合
+     * Created by jl on 2021/5/19 16:30.
+     */
+    public List<SsqDetailInfoDO> getAppointSizeData (List<SsqDetailInfoDO> ssqDetailInfoDOS,int index, int size) {
+        List<SsqDetailInfoDO> tempSsqDetailInfoDOS = new ArrayList<>();
+        int tempIndex = index;
+        for (int i = 0; i < size ; i++) {
+            SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoDOS.get(tempIndex);
+            tempSsqDetailInfoDOS.add(ssqDetailInfoDO);
+            tempIndex++;
+        }
+        return tempSsqDetailInfoDOS;
+    }
+
+
+    /**
+     * 获取 0,1,2 路平均数
+     * @param ssqDetailInfoDOS 数据源
+     * @param index 获取那个球的比例  从大到小
+     * @return BILieDto
+     * Created by jl on 2021/5/19 16:50.
+     */
+    public List<BILieDto> getBilie (List<SsqDetailInfoDO> ssqDetailInfoDOS,int index) {
+        List<BILieDto> biLieDtos = new ArrayList<>();
+        int tempIndex = index;
+
+        AtomicReference<Integer> zeroNum = new AtomicReference<>(0);
+
+        AtomicReference<Integer> oneNum = new AtomicReference<>(0);
+
+        AtomicReference<Integer> twoNum = new AtomicReference<>(0);
+
+        ssqDetailInfoDOS.forEach(ssqDetailInfoDO -> {
+            String yushu = "";
+            if (tempIndex == 1) {
+                yushu = ssqDetailInfoDO.getAYushu();
+            } else if (tempIndex == 2) {
+                yushu = ssqDetailInfoDO.getBYushu();
+            } else if (tempIndex == 3) {
+                yushu = ssqDetailInfoDO.getCYushu();
+            } else if (tempIndex == 4) {
+                yushu = ssqDetailInfoDO.getDYushu();
+            } else if (tempIndex == 5) {
+                yushu = ssqDetailInfoDO.getEQiu();
+            } else if (tempIndex == 6) {
+                yushu = ssqDetailInfoDO.getFYushu();
+            }
+
+            if (StringUtils.equals(yushu,"0")) {
+                zeroNum.updateAndGet(v -> v + 1);
+            } else if (StringUtils.equals(yushu,"1")) {
+                oneNum.updateAndGet(v -> v + 1);
+            } else {
+                twoNum.updateAndGet(v -> v + 1);
+            }
+        });
+        BILieDto zBiLieDto = new BILieDto();
+        zBiLieDto.setNum(zeroNum.get());
+        zBiLieDto.setYuShu("0");
+        biLieDtos.add(zBiLieDto);
+
+        BILieDto oBiLieDto = new BILieDto();
+        oBiLieDto.setNum(oneNum.get());
+        oBiLieDto.setYuShu("1");
+        biLieDtos.add(oBiLieDto);
+
+        BILieDto tBiLieDto = new BILieDto();
+        tBiLieDto.setNum(twoNum.get());
+        tBiLieDto.setYuShu("2");
+        biLieDtos.add(tBiLieDto);
+
+        return biLieDtos;
+    }
+
+
 
 
     public static void main(String[] args) {

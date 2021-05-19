@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface SsqDetailInfoMapper extends Mapper<SsqDetailInfoDO> {
 
-    List<SsqDetailInfoDO> selectListByLimit(@Param("issueno") Long issueno);
+    List<SsqDetailInfoDO> selectListByLimit(Map<String,Object> map);
 
     List<SsqDetailInfoDO> findListByIdAddOne(Map<String,Object> map);
 }
