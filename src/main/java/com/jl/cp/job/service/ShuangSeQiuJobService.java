@@ -167,91 +167,12 @@ public class ShuangSeQiuJobService {
         return null;
     }
 
-    /**
-     * 获取历史三区间分布
-     * @param
-     * @return
-     * Created by jl on 2021/3/5 13:53.
-     */
-    private YuCeDataDTO getHistorySanSection(List<SsqDetailInfoDO> sectionStaDos) {
-        if (CollectionUtil.isEmpty(sectionStaDos)) {
-            return null;
-        }
-        Collections.sort(sectionStaDos, new Comparator<SsqDetailInfoDO>() {
-            @Override
-            public int compare(SsqDetailInfoDO o1, SsqDetailInfoDO o2) {
-                return (o2.getIssueno() + "").compareTo((o1.getIssueno() + ""));
-            }
-        });
-        YuCeDataDTO yuCeDataDTO = new YuCeDataDTO();
-        for (SsqDetailInfoDO ssqDetailInfoDO : sectionStaDos) {
-            yuCeDataDTO.setDaXiaoBi(getStr(yuCeDataDTO.getDaXiaoBi(),ssqDetailInfoDO.getDaxiaoRatio()));
-            yuCeDataDTO.setHeZhi(getStr(yuCeDataDTO.getHeZhi(),ssqDetailInfoDO.getSumValue()));
-            yuCeDataDTO.setQiOuBi(getStr(yuCeDataDTO.getQiOuBi(),ssqDetailInfoDO.getDanshuangRatio()));
-            yuCeDataDTO.setWeiHe(getStr(yuCeDataDTO.getWeiHe(),ssqDetailInfoDO.getTailSumValue()));
-            yuCeDataDTO.setSanSection(getStr(yuCeDataDTO.getSanSection(),ssqDetailInfoDO.getSanSection()));
-        }
-        return yuCeDataDTO;
-    }
-
     public void batchInsertDetail() {
         List<SsqBaseInfoDO> baseInfoDOS = ssqBaseInfoMapper.selectAll();
         baseInfoDOS.forEach(ssqBaseInfoDO -> {
             SsqDetailInfoDO ssqDetailInfoDO = getSsqDetailInfoDO(ssqBaseInfoDO.getNumber(),ssqBaseInfoDO.getIssueno());
             ssqDetailInfoMapper.insert(ssqDetailInfoDO);
         });
-    }
-
-    private YuCeDataDTO getYuCeDataDTO(List<SsqDetailInfoDO> ssqDetailInfoDOS) {
-        Collections.sort(ssqDetailInfoDOS, new Comparator<SsqDetailInfoDO>() {
-            @Override
-            public int compare(SsqDetailInfoDO o1, SsqDetailInfoDO o2) {
-                return (o2.getIssueno() + "").compareTo((o1.getIssueno() + ""));
-            }
-        });
-
-        YuCeDataDTO yuCeDataDTO = new YuCeDataDTO();
-        int count = 0;
-        int flagNum = 4;
-        for (int i = 0 ; i < ssqDetailInfoDOS.size() ;i++) {
-            if (count == flagNum) {
-                flagNum = 5;
-                SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoDOS.get(i);
-
-                yuCeDataDTO.setHangLieRed1(getStr(yuCeDataDTO.getHangLieRed1(),ssqDetailInfoDO.getAQiu()));
-                yuCeDataDTO.setHangLieLuShu1(getStr(yuCeDataDTO.getHangLieLuShu1(),ssqDetailInfoDO.getAYushu()));
-                yuCeDataDTO.setHangLieWuXing1(getStr(yuCeDataDTO.getHangLieWuXing1(),ssqDetailInfoDO.getAWuxing()));
-                yuCeDataDTO.setHangLieDanShuang1(getStr(yuCeDataDTO.getHangLieDanShuang1(),ssqDetailInfoDO.getADanshuang()));
-
-                yuCeDataDTO.setHangLieRed2(getStr(yuCeDataDTO.getHangLieRed2(),ssqDetailInfoDO.getBQiu()));
-                yuCeDataDTO.setHangLieLuShu2(getStr(yuCeDataDTO.getHangLieLuShu2(),ssqDetailInfoDO.getBYushu()));
-                yuCeDataDTO.setHangLieWuXing2(getStr(yuCeDataDTO.getHangLieWuXing2(),ssqDetailInfoDO.getBWuxing()));
-                yuCeDataDTO.setHangLieDanShuang2(getStr(yuCeDataDTO.getHangLieDanShuang2(),ssqDetailInfoDO.getBDanshuang()));
-
-                yuCeDataDTO.setHangLieRed3(getStr(yuCeDataDTO.getHangLieRed3(),ssqDetailInfoDO.getCQiu()));
-                yuCeDataDTO.setHangLieLuShu3(getStr(yuCeDataDTO.getHangLieLuShu3(),ssqDetailInfoDO.getCYushu()));
-                yuCeDataDTO.setHangLieWuXing3(getStr(yuCeDataDTO.getHangLieWuXing3(),ssqDetailInfoDO.getCWuxing()));
-                yuCeDataDTO.setHangLieDanShuang3(getStr(yuCeDataDTO.getHangLieDanShuang3(),ssqDetailInfoDO.getCDanshuang()));
-
-                yuCeDataDTO.setHangLieRed4(getStr(yuCeDataDTO.getHangLieRed4(),ssqDetailInfoDO.getDQiu()));
-                yuCeDataDTO.setHangLieLuShu4(getStr(yuCeDataDTO.getHangLieLuShu4(),ssqDetailInfoDO.getDYushu()));
-                yuCeDataDTO.setHangLieWuXing4(getStr(yuCeDataDTO.getHangLieWuXing4(),ssqDetailInfoDO.getDWuxing()));
-                yuCeDataDTO.setHangLieDanShuang4(getStr(yuCeDataDTO.getHangLieDanShuang4(),ssqDetailInfoDO.getDDanshuang()));
-
-                yuCeDataDTO.setHangLieRed5(getStr(yuCeDataDTO.getHangLieRed5(),ssqDetailInfoDO.getEQiu()));
-                yuCeDataDTO.setHangLieLuShu5(getStr(yuCeDataDTO.getHangLieLuShu5(),ssqDetailInfoDO.getEYushu()));
-                yuCeDataDTO.setHangLieWuXing5(getStr(yuCeDataDTO.getHangLieWuXing5(),ssqDetailInfoDO.getEWuxing()));
-                yuCeDataDTO.setHangLieDanShuang5(getStr(yuCeDataDTO.getHangLieDanShuang5(),ssqDetailInfoDO.getEDanshuang()));
-
-                yuCeDataDTO.setHangLieRed6(getStr(yuCeDataDTO.getHangLieRed6(),ssqDetailInfoDO.getFQiu()));
-                yuCeDataDTO.setHangLieLuShu6(getStr(yuCeDataDTO.getHangLieLuShu6(),ssqDetailInfoDO.getFYushu()));
-                yuCeDataDTO.setHangLieWuXing6(getStr(yuCeDataDTO.getHangLieWuXing6(),ssqDetailInfoDO.getFWuxing()));
-                yuCeDataDTO.setHangLieDanShuang6(getStr(yuCeDataDTO.getHangLieDanShuang6(),ssqDetailInfoDO.getFDanshuang()));
-                count = 0;
-            }
-            count++;
-        }
-        return yuCeDataDTO;
     }
 
     /**
@@ -281,32 +202,6 @@ public class ShuangSeQiuJobService {
         content.append("<tr><td>预测结果</td><td>"+yuce+"</td></tr>");
         content.append("</table></body></html>");
         return content.toString();
-    }
-
-    /**
-     * 将从右至左看改成从左至右看
-     * @param
-     * @return
-     * Created by jl on 2021/3/5 14:20.
-     */
-    public String printConvert (String str) {
-        if (StringUtils.isBlank(str)) {
-            return str;
-        }
-
-        String[] strs = str.split(",");
-
-        StringBuffer sb = new StringBuffer();
-        for (int i = strs.length-1 ; i >= 0 ;i--) {
-            if (StringUtils.isBlank(sb.toString())) {
-                sb.append(strs[i]);
-            } else {
-                sb.append(","+strs[i]);
-            }
-        }
-
-        return sb.toString();
-
     }
 
 
