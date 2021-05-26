@@ -16,6 +16,12 @@ public class SsqYuCeDO {
 
     private String yuCeData;
 
+    private String body;
+
     private String odds;
+
+    private String isin;
+
+    private String isInBody;
 
 }

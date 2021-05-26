@@ -71,6 +71,43 @@
   </select>
 
 
+  <select id="statYuShuInfo" parameterType="map" resultType="com.jl.cp.dto.StatYuShuDTO">
+    <![CDATA[
+        SELECT
+          yuShu,countYuShu
+        FROM
+          (SELECT
+            a.${columnNameYuShu} yuShu,
+            COUNT(a.${columnNameYuShu}) countYuShu
+          FROM
+            (SELECT
+              *
+            FROM
+              ssq_detail_info
+            WHERE id IN
+              (SELECT id + 1 FROM ssq_detail_info WHERE ${columnName} = '${columnValue}' and issueno <= ${issueno})
+            ORDER BY issueno DESC
+            LIMIT 0, 15) a
+          GROUP BY a.${columnNameYuShu}) b
+        ORDER BY b.countYuShu DESC
+        ]]>
+  </select>
+
+  <select id="currentStatYuShuInfo" parameterType="map" resultType="com.jl.cp.dto.StatYuShuDTO">
+    <![CDATA[
+        select
+          yuShu,
+          countYuShu
+        from (
+        SELECT
+          b.${columnName} yuShu,count(b.${columnName}) countYuShu
+        FROM
+           (SELECT * FROM ssq_detail_info WHERE issueno <= ${issueno} ORDER BY issueno DESC LIMIT 0, 15)b GROUP BY b.${columnName}
+        )c ORDER BY c.countYuShu DESC
+        ]]>
+  </select>
+
+
   <select id="findListByIdAddOne" parameterType="map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
@@ -87,5 +124,85 @@
     </where>
     )
     order by issueno desc limit 0,15;
+  </select>
+
+
+  <select id="sumSumValue" parameterType="map" resultType="com.jl.cp.dto.SumValueDTO">
+    <![CDATA[
+    SELECT
+    MIN(b.SUM_VALUE) sumMinValue,
+    MAX(b.SUM_VALUE) sumMaxValue,
+    AVG(b.SUM_VALUE) sumAvgValue
+    FROM
+    (SELECT
+    a.SUM_VALUE SUM_VALUE
+    FROM
+    (SELECT
+    *
+    FROM
+    ssq_detail_info
+    WHERE id IN
+    (SELECT
+    id + 1
+    FROM
+    `ssq_detail_info`
+    WHERE SUM_VALUE >= #{minValue}
+    AND SUM_VALUE <= ${maxValue} and issueno <= ${issueno})
+    ORDER BY issueno DESC
+    LIMIT 0, 15) a
+    GROUP BY a.SUM_VALUE) b
+    ORDER BY b.SUM_VALUE DESC
+    ]]>
+  </select>
+
+
+  <select id="sumTailSumValue" parameterType="map" resultType="com.jl.cp.dto.SumValueDTO">
+    <![CDATA[
+    SELECT
+      MIN(b.tail_sum_value) sumMinValue,
+      MAX(b.tail_sum_value) sumMaxValue,
+      AVG(b.tail_sum_value) sumAvgValue
+    FROM
+      (SELECT
+        a.tail_sum_value tail_sum_value
+      FROM
+        (SELECT
+          *
+        FROM
+          ssq_detail_info
+        WHERE id IN
+          (SELECT
+            id + 1
+          FROM
+            `ssq_detail_info`
+          WHERE tail_sum_value = ${maxValue} and issueno <= ${issueno} )
+        ORDER BY issueno DESC
+        LIMIT 0, 15) a
+      GROUP BY a.tail_sum_value) b
+    ORDER BY b.tail_sum_value DESC
+    ]]>
+  </select>
+
+
+  <select id="getSanSectionList" parameterType="map" resultType="java.lang.String">
+    <![CDATA[
+    SELECT
+      a.san_section
+    FROM
+      (SELECT
+        *
+      FROM
+        ssq_detail_info
+      WHERE id IN
+        (SELECT
+          id + 1
+        FROM
+          `ssq_detail_info`
+        WHERE san_section = '${sanSection}' and issueno <= ${issueno})
+      ORDER BY issueno DESC
+      LIMIT 0, 20) a
+    GROUP BY a.san_section
+    ORDER BY issueno DESC limit 0,4
+    ]]>
   </select>
 </mapper>

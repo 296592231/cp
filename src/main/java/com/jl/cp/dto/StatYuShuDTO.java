@@ -6,18 +6,19 @@ package com.jl.cp.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+
 /**
  * @author jl
  * @date 2021/5/19 16:53
  */
 @Getter
 @Setter
-public class BILieDto {
+public class StatYuShuDTO {
 
-    /**多少期类出现的次数**/
-    private Integer num;
+    /**余数**/
+    private Integer yuShu;
 
-    /**0,1,2**/
-    private String yuShu;
+    /**余数统计值**/
+    private Integer countYuShu;
 
 }

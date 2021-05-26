@@ -78,16 +78,16 @@ public class ShuangSeQiuUtils {
         return resultList;
     }
 
-    //开奖号码
-    public final static int[] prizes = {10,15,17,25,31,32};
+    //开奖号码02 04 07 24 25 32
+    public final static int[] prizes = {2,4,7,24,25,32};
 
     //尾数和区间
-    public final static int START_MANTISSA_SUM = 20;
-    public final static int END_MANTISSA_SUM = 36;
+    public final static int START_MANTISSA_SUM = 15;
+    public final static int END_MANTISSA_SUM = 28;
 
     //和值区间
-    public final static int START_SUM = 80;
-    public final static int END_SUM = 130;
+    public final static int START_SUM = 74;
+    public final static int END_SUM = 124;
 
     //三区间比（支持多个区间）
     public final static List<int[]> THREE_SECTION = new ArrayList<>();
@@ -100,11 +100,11 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public final static int[][] LU_SHU = new int[][]
-            {{0,2},{1,0},{2,1},{0,2},{1,2},{0,2}};
+            {{2,1},{1,0},{1,2},{2,0},{2,1},{0,2}};
 
     //每个球的区间
     public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{2,3,6,8,9},{3,4,6,7,9,10,12,13,15,16},{8,10,11,13,14,16,17,19},{15,17,18,20,21,23,24},{19,20,22,23,25,26,28,29},{24,26,27,29,30,32,33}};
+            {{2,3,6,8,9},{3,4,6,7,9,10,12,13,15,16},{7,10,11,13,14,16,17,19},{15,17,18,20,21,23,24},{19,20,22,23,25,26,28,29},{24,26,27,29,30,32,33}};
 
     //精选号码
     public final static int[][] SELECTED = new int[][]
@@ -112,21 +112,15 @@ public class ShuangSeQiuUtils {
 
     static {
         //三区间比设置（支持多个区间）
-        THREE_SECTION.add(new int[]{2,2,2});
-        THREE_SECTION.add(new int[]{1,3,2});
-        THREE_SECTION.add(new int[]{3,2,1});
-        THREE_SECTION.add(new int[]{1,2,3});
-        THREE_SECTION.add(new int[]{2,1,3});
+        THREE_SECTION.add(new int[]{3,0,3});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
-        SINGLE_AND_DOUBLE.add(new int[]{4,2});
         SINGLE_AND_DOUBLE.add(new int[]{3,3});
         SINGLE_AND_DOUBLE.add(new int[]{2,4});
 
         //大小比例  第一个是大 第二个是小
         SIZE_RATIO.add(new int[]{2,4});
         SIZE_RATIO.add(new int[]{3,3});
-        SIZE_RATIO.add(new int[]{4,2});
     }
 
     /**
@@ -529,20 +523,20 @@ public class ShuangSeQiuUtils {
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(threeSectionList);
-        //printlnList.addAll(getRandom(luShu,5));
+        LinkedList<int[]> luShu = luShu(sizeRatio);
+        //printlnList.addAll(getRandom(luShu,10));
 
         //每个区间
         LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
-        printlnList.addAll(getRandom(eachNumberRangeList,5));
+        printlnList.addAll(getRandom(eachNumberRangeList,100));
 
         //每个区间
         LinkedList<int[]> selectedList = selected(luShu);
-        printlnList.addAll(getRandom(selectedList,5));
+        //printlnList.addAll(getRandom(selectedList,5));
 
         System.out.println(new Gson().toJson(printlnList));
 
-        checkIsPrize(eachNumberRangeList);
+        checkIsPrize(printlnList);
     }
 
     /**

@@ -11,7 +11,8 @@ import cn.hutool.extra.mail.MailUtil;
 import com.google.gson.Gson;
 import com.jl.cp.constants.Constants;
 import com.jl.cp.coverter.SsqBaseInfoDOCoverter;
-import com.jl.cp.dto.BILieDto;
+import com.jl.cp.dto.StatYuShuDTO;
+import com.jl.cp.dto.SumValueDTO;
 import com.jl.cp.dto.YuCeDataDTO;
 import com.jl.cp.entity.SsqBaseInfoDO;
 import com.jl.cp.entity.SsqDetailInfoDO;
@@ -30,7 +31,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author jl
@@ -97,7 +97,7 @@ public class ShuangSeQiuJobService {
             ssqBaseInfoMapper.insert(insertSsqBaseInfoDO);
             SsqDetailInfoDO ssqDetailInfoDO = getSsqDetailInfoDO(insertSsqBaseInfoDO.getNumber(),insertSsqBaseInfoDO.getIssueno());
             ssqDetailInfoMapper.insert(ssqDetailInfoDO);
-            //getYuCeData(Long.valueOf(ssqDetailInfoDO.getIssueno()),ssqDetailInfoDO.getSanSection());
+            getYuCeData(ssqDetailInfoDO);
         }
 
     }
@@ -106,20 +106,9 @@ public class ShuangSeQiuJobService {
       * @Author LeJiang
       * @Remark 手动获取需要查看的数据集合
       */
-    public void getYuCeData (Long issueno,String sanSection) {
-        //查询数据发送邮件
-        Map<String,Object> paremMap = new HashMap<>();
-        paremMap.put("issueno",issueno);
-        List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(paremMap);
+    public void getYuCeData (SsqDetailInfoDO ssqDetailInfoDO) {
 
-        //查看以往三区间分布
-        Map<String,Object> map = new HashMap<>();
-        map.put("issueno",issueno);
-        map.put("sanSection",sanSection);
-        List<SsqDetailInfoDO> sectionStaDos = ssqDetailInfoMapper.findListByIdAddOne(map);
-
-
-        String content = getContent(getYuCeDataDTO(ssqDetailInfoDOS),getHistorySanSection(sectionStaDos),yuCeBlue(issueno.toString()));
+        String content = getContent(forecas(ssqDetailInfoDO));
 
         MailAccount account = new MailAccount();
         account.setHost("smtp.qq.com");
@@ -129,7 +118,7 @@ public class ShuangSeQiuJobService {
         account.setUser("296592231@qq.com");
         //密码
         account.setPass("wyqcrfzgduprbhec");
-        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", content, true);
+        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", content, true);
     }
 
     /**
@@ -279,7 +268,7 @@ public class ShuangSeQiuJobService {
         return str1 + "," + str2;
     }
 
-    public String getContent (YuCeDataDTO yuCeDataDTO,YuCeDataDTO historyYuCeDataDTO,String yuCeBlue) {
+    public String getContent (String yuce) {
         StringBuilder content = new StringBuilder();
         content.append("<html><head><style type=\"text/css\">");
         content.append("table{border-collapse: collapse;text-align: center;table-layout: fixed;width: 1080px;}");
@@ -288,48 +277,8 @@ public class ShuangSeQiuJobService {
         content.append("table tr:nth-child(odd){background: #fff;}");
         content.append("table tr:nth-child(even){background: #F5FAFA;}");
         content.append("</style></head><body>");
-        content.append("<h3>拉取结果汇总</h3><table style=\"text-align: left;width: 500px;\">");
-        content.append("<tr><td>6行6列每五期数据，红球1</td><td>"+printConvert(yuCeDataDTO.getHangLieRed1()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu1()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing1()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球1，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang1()).replaceAll(",","，")+"</td></tr>");
-
-        content.append("<tr><td>6行6列每五期数据，红球2</td><td>"+printConvert(yuCeDataDTO.getHangLieRed2()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu2()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing2()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球2，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang2()).replaceAll(",","，")+"</td></tr>");
-
-        content.append("<tr><td>6行6列每五期数据，红球3</td><td>"+printConvert(yuCeDataDTO.getHangLieRed3()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu3()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing3()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球3，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang3()).replaceAll(",","，")+"</td></tr>");
-
-        content.append("<tr><td>6行6列每五期数据，红球4</td><td>"+printConvert(yuCeDataDTO.getHangLieRed4()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu4()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing4()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球4，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang4()).replaceAll(",","，")+"</td></tr>");
-
-        content.append("<tr><td>6行6列每五期数据，红球5</td><td>"+printConvert(yuCeDataDTO.getHangLieRed5()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu5()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing5()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球5，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang5()).replaceAll(",","，")+"</td></tr>");
-
-        content.append("<tr><td>6行6列每五期数据，红球6</td><td>"+printConvert(yuCeDataDTO.getHangLieRed6()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，012路</td><td>"+printConvert(yuCeDataDTO.getHangLieLuShu6()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，五行</td><td>"+printConvert(yuCeDataDTO.getHangLieWuXing6()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>行6列每五期数据，红球6，单双</td><td>"+printConvert(yuCeDataDTO.getHangLieDanShuang6()).replaceAll(",","，")+"</td></tr>");
-
-
-        content.append("<tr><td>历史数据分布，和值</td><td>"+printConvert(historyYuCeDataDTO.getHeZhi()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>历史数据分布，尾和</td><td>"+printConvert(historyYuCeDataDTO.getWeiHe()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>历史数据分布，大小比</td><td>"+printConvert(historyYuCeDataDTO.getDaXiaoBi()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>历史数据分布，奇偶比</td><td>"+printConvert(historyYuCeDataDTO.getQiOuBi()).replaceAll(",","，")+"</td></tr>");
-        content.append("<tr><td>历史数据分布，三区间比</td><td>"+printConvert(historyYuCeDataDTO.getSanSection()).replaceAll(",","，")+"</td></tr>");
-
-        if (StringUtils.isNotBlank(yuCeBlue)) {
-            content.append("<tr><td>篮球预测</td><td>"+yuCeBlue+"</td></tr>");
-        }
-
+        content.append("<h3>预测结果</h3><table style=\"text-align: left;width: 500px;\">");
+        content.append("<tr><td>预测结果</td><td>"+yuce+"</td></tr>");
         content.append("</table></body></html>");
         return content.toString();
     }
@@ -405,136 +354,323 @@ public class ShuangSeQiuJobService {
 
     /**
      * 双色球预测
+     * @param ssqDetailInfoDO 最新详情数据
+     * @return
+     * Created by jl on 2021/5/26 17:29.
+     */
+
+    public String forecas (SsqDetailInfoDO ssqDetailInfoDO) {
+        //==============================================查当前===============================================================
+        Map<String,Object> paremMap = new HashMap<>();
+        //查A余数 得到一个集合排序最大的在第一条
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","a_yushu");
+        List<StatYuShuDTO> aStatYuShuDTOS = ssqDetailInfoMapper.currentStatYuShuInfo(paremMap);
+
+        //查B余数
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","b_yushu");
+        List<StatYuShuDTO> bStatYuShuDTOS = ssqDetailInfoMapper.currentStatYuShuInfo(paremMap);
+
+        //查C余数
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","c_yushu");
+        List<StatYuShuDTO> cStatYuShuDTOS = ssqDetailInfoMapper.currentStatYuShuInfo(paremMap);
+
+        //查D余数
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","d_yushu");
+        List<StatYuShuDTO> dStatYuShuDTOS = ssqDetailInfoMapper.currentStatYuShuInfo(paremMap);
+
+        //查E余数
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","e_yushu");
+        List<StatYuShuDTO> eStatYuShuDTOS = ssqDetailInfoMapper.currentStatYuShuInfo(paremMap);
+
+        //查F余数
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","f_yushu");
+        List<StatYuShuDTO> fStatYuShuDTOS = ssqDetailInfoMapper.currentStatYuShuInfo(paremMap);
+
+
+
+
+        //==============================================查历史===============================================================
+
+        //查历史余数统计
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","a_qiu");
+        paremMap.put("columnValue",ssqDetailInfoDO.getAQiu());
+        paremMap.put("columnNameYuShu","a_yushu");
+        List<StatYuShuDTO> aHistoryStatYuShuDTOS = ssqDetailInfoMapper.statYuShuInfo(paremMap);
+        String aYuCe = getYuCeData(aStatYuShuDTOS,aHistoryStatYuShuDTOS,ssqDetailInfoDO.getIssueno());
+
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","b_qiu");
+        paremMap.put("columnValue",ssqDetailInfoDO.getBQiu());
+        paremMap.put("columnNameYuShu","b_yushu");
+        List<StatYuShuDTO> bHistoryStatYuShuDTOS = ssqDetailInfoMapper.statYuShuInfo(paremMap);
+        String bYuCe = getYuCeData(bStatYuShuDTOS,bHistoryStatYuShuDTOS,ssqDetailInfoDO.getIssueno());
+
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","c_qiu");
+        paremMap.put("columnValue",ssqDetailInfoDO.getCQiu());
+        paremMap.put("columnNameYuShu","c_yushu");
+        List<StatYuShuDTO> cHistoryStatYuShuDTOS = ssqDetailInfoMapper.statYuShuInfo(paremMap);
+        String cYuCe = getYuCeData(cStatYuShuDTOS,cHistoryStatYuShuDTOS,ssqDetailInfoDO.getIssueno());
+
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","d_qiu");
+        paremMap.put("columnValue",ssqDetailInfoDO.getDQiu());
+        paremMap.put("columnNameYuShu","d_yushu");
+        List<StatYuShuDTO> dHistoryStatYuShuDTOS = ssqDetailInfoMapper.statYuShuInfo(paremMap);
+        String dYuCe = getYuCeData(dStatYuShuDTOS,dHistoryStatYuShuDTOS,ssqDetailInfoDO.getIssueno());
+
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","e_qiu");
+        paremMap.put("columnValue",ssqDetailInfoDO.getEQiu());
+        paremMap.put("columnNameYuShu","e_yushu");
+        List<StatYuShuDTO> eHistoryStatYuShuDTOS = ssqDetailInfoMapper.statYuShuInfo(paremMap);
+        String eYuCe = getYuCeData(eStatYuShuDTOS,eHistoryStatYuShuDTOS,ssqDetailInfoDO.getIssueno());
+
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("columnName","f_qiu");
+        paremMap.put("columnValue",ssqDetailInfoDO.getFQiu());
+        paremMap.put("columnNameYuShu","f_yushu");
+        List<StatYuShuDTO> fHistoryStatYuShuDTOS = ssqDetailInfoMapper.statYuShuInfo(paremMap);
+        String fYuCe = getYuCeData(fStatYuShuDTOS,fHistoryStatYuShuDTOS,ssqDetailInfoDO.getIssueno());
+
+
+        //查尾和
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("maxValue",ssqDetailInfoDO.getTailSumValue());
+        SumValueDTO tailSumValueDTO = ssqDetailInfoMapper.sumTailSumValue(paremMap);
+        int tailSanMax = tailSumValueDTO.getSumAvgValue() + 15;
+        int tailSanMin = tailSumValueDTO.getSumAvgValue() - 5;
+
+
+        //查总和
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("minValue",Integer.parseInt(ssqDetailInfoDO.getSumValue()) - 10);
+        paremMap.put("maxValue",Integer.parseInt(ssqDetailInfoDO.getSumValue()) + 10);
+        SumValueDTO sumValueDTO = ssqDetailInfoMapper.sumSumValue(paremMap);
+        int sanMax = sumValueDTO.getSumAvgValue() + 25;
+        int sanMin = sumValueDTO.getSumAvgValue() - 25;
+
+        //查三区间
+        paremMap.clear();
+        paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
+        paremMap.put("sanSection",ssqDetailInfoDO.getSanSection());
+        List<String> sanSectionList = ssqDetailInfoMapper.getSanSectionList(paremMap);
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("a:【"+aYuCe+"】");
+        sb.append("，b:【"+bYuCe+"】");
+        sb.append("，c:【"+cYuCe+"】");
+        sb.append("，d:【"+dYuCe+"】");
+        sb.append("，e:【"+eYuCe+"】");
+        sb.append("，f:【"+fYuCe+"】");
+        sb.append("=======总和:【"+ sanMin +"~"+ sanMax +"】");
+        sb.append("，尾和:【"+tailSanMin +"~"+ tailSanMax +"】");
+        sb.append("，三区间:【"+new Gson().toJson(sanSectionList)+"】");
+
+        Map<String,List<StatYuShuDTO>> stringListMap = new HashMap<>();
+        stringListMap.put("aStatYuShuDTOS",aStatYuShuDTOS);
+        stringListMap.put("aHistoryStatYuShuDTOS",aHistoryStatYuShuDTOS);
+        stringListMap.put("bStatYuShuDTOS",bStatYuShuDTOS);
+        stringListMap.put("bHistoryStatYuShuDTOS",bHistoryStatYuShuDTOS);
+        stringListMap.put("cStatYuShuDTOS",cStatYuShuDTOS);
+        stringListMap.put("cHistoryStatYuShuDTOS",cHistoryStatYuShuDTOS);
+        stringListMap.put("dStatYuShuDTOS",dStatYuShuDTOS);
+        stringListMap.put("dHistoryStatYuShuDTOS",dHistoryStatYuShuDTOS);
+        stringListMap.put("eStatYuShuDTOS",eStatYuShuDTOS);
+        stringListMap.put("eHistoryStatYuShuDTOS",eHistoryStatYuShuDTOS);
+        stringListMap.put("fStatYuShuDTOS",fStatYuShuDTOS);
+        stringListMap.put("fHistoryStatYuShuDTOS",fHistoryStatYuShuDTOS);
+
+        SsqYuCeDO ssqYuCeDO = new SsqYuCeDO();
+
+        SsqDetailInfoDO ssqDetailInfoDO1 = new SsqDetailInfoDO();
+        if (ssqDetailInfoDO.getId() != null) {
+            ssqDetailInfoDO1.setId(ssqDetailInfoDO.getId() + 1);
+            SsqDetailInfoDO querySsqDetailInfoDO = ssqDetailInfoMapper.selectOne(ssqDetailInfoDO1);
+            if (querySsqDetailInfoDO != null) {
+                StringBuffer ssb = new StringBuffer();
+                ssb.append(querySsqDetailInfoDO.getAYushu() + "," + querySsqDetailInfoDO.getBYushu() + "," + querySsqDetailInfoDO.getCYushu() + "," + querySsqDetailInfoDO.getDYushu() + "," + querySsqDetailInfoDO.getEYushu() + "," + querySsqDetailInfoDO.getFYushu());
+                ssb.append("--尾和:" + querySsqDetailInfoDO.getTailSumValue());
+                ssb.append("--总和:" + querySsqDetailInfoDO.getSumValue());
+                ssb.append("--三区间:" + querySsqDetailInfoDO.getSanSection());
+
+                ssqYuCeDO.setIsInBody(ssb.toString());
+                int isIn = 0;
+                if (aYuCe.contains(querySsqDetailInfoDO.getAYushu())) {
+                    isIn += 1;
+                }
+                if (bYuCe.contains(querySsqDetailInfoDO.getBYushu())) {
+                    isIn += 1;
+                }
+                if (cYuCe.contains(querySsqDetailInfoDO.getCYushu())) {
+                    isIn += 1;
+                }
+                if (dYuCe.contains(querySsqDetailInfoDO.getDYushu())) {
+                    isIn += 1;
+                }
+                if (eYuCe.contains(querySsqDetailInfoDO.getEYushu())) {
+                    isIn += 1;
+                }
+                if (fYuCe.contains(querySsqDetailInfoDO.getFYushu())) {
+                    isIn += 1;
+                }
+
+                StringBuffer isin = new StringBuffer();
+                isin.append(isIn);
+                int tailSumValue = Integer.parseInt(querySsqDetailInfoDO.getTailSumValue());
+                if (tailSumValue >= tailSanMin && tailSumValue <= tailSanMax) {
+                    isin.append("--在尾和区间");
+                }
+
+                int sumValue = Integer.parseInt(querySsqDetailInfoDO.getSumValue());
+                if (sumValue >= sanMin && sumValue <= sanMax) {
+                    isin.append("--在总和区间");
+                }
+
+                if (CollectionUtil.isNotEmpty(sanSectionList)) {
+                    sanSectionList.forEach(s -> {
+                        if (s.equals(querySsqDetailInfoDO.getSanSection())) {
+                            isin.append("--在三区间");
+                        }
+                    });
+                }
+
+                ssqYuCeDO.setIsin(isin.toString());
+
+            }
+        }
+
+
+        ssqYuCeDO.setYuCeData(sb.toString());
+        ssqYuCeDO.setBody(new Gson().toJson(stringListMap));
+        ssqYuCeDO.setOdds(ssqDetailInfoDO.getIssueno());
+        ssqYuCeMapper.insert(ssqYuCeDO);
+
+        return sb.toString();
+
+    }
+
+
+    /**
+     * 测试双色球预测
      * @param
      * @return
      * Created by jl on 2021/5/19 14:44.
      */
-    public void forecast () {
+    public void testForecast () {
 
         Map<String,Object> paremMap = new HashMap<>();
         List<SsqDetailInfoDO> allSsqDetailInfoDOS = ssqDetailInfoMapper.selectListByLimit(paremMap);
 
-        for (int i = 0 ; i< allSsqDetailInfoDOS.size() ; i++) {
-            List<SsqDetailInfoDO> all = getAppointSizeData(allSsqDetailInfoDOS,i,15);
-            SsqDetailInfoDO allDO = allSsqDetailInfoDOS.get(i);
-            List<BILieDto> allBiLieDto = getBilie(all,1);
+        if (CollectionUtil.isNotEmpty(allSsqDetailInfoDOS)) {
 
-            Map<String,Object> map = new HashMap<>();
-            map.put("columnName","a_qiu");
-            map.put("columnValue",allDO.getAQiu());
-            List<SsqDetailInfoDO> ssqDetailInfoDOS = ssqDetailInfoMapper.findListByIdAddOne(map);
-            List<SsqDetailInfoDO> histryDOS = getAppointSizeData(ssqDetailInfoDOS,0,15);
-            List<BILieDto> histryBiLieDto = getBilie(histryDOS,1);
-
-            //获取最大的两个值
-            allBiLieDto.addAll(histryBiLieDto);
-            Collections.sort(allBiLieDto, (BILieDto h1, BILieDto h2) -> h2.getNum() - h1.getNum());
-            BILieDto zBILieDto = allBiLieDto.get(0);
-            BILieDto oBILieDto = allBiLieDto.get(1);
-            if (zBILieDto.getYuShu().equals(oBILieDto.getYuShu())) {
-                oBILieDto = allBiLieDto.get(2);
+            for (SsqDetailInfoDO ssqDetailInfoDO : allSsqDetailInfoDOS) {
+                forecas(ssqDetailInfoDO);
             }
-            SsqYuCeDO ssqYuCeDO = new SsqYuCeDO();
-            ssqYuCeDO.setYuCeData(zBILieDto.getYuShu() + "," + oBILieDto.getYuShu());
-            ssqYuCeDO.setOdds(allDO.getIssueno());
-            ssqYuCeMapper.insert(ssqYuCeDO);
+
         }
+    }
+    
+    /**
+     * 
+     * @param statYuShuDTOS 当前统计数据
+     * @param historyStatYuShuDTOS 当前统计数据
+     * @return 返回 预测的0,1,2路
+     * Created by jl on 2021/5/26 11:28.
+     */
+    public String getYuCeData (List<StatYuShuDTO> statYuShuDTOS,List<StatYuShuDTO> historyStatYuShuDTOS,String issueno) {
+        try {
+            Integer currentMaxYuShu = statYuShuDTOS.get(0).getYuShu();
+            Integer currentMaxYuShuNum = statYuShuDTOS.get(0).getCountYuShu();
+            Integer currentMinYuShu = statYuShuDTOS.get(2).getYuShu();
+            Integer currentMinYuShuNum = statYuShuDTOS.get(2).getCountYuShu();
+            Integer currentAvgYuShu = statYuShuDTOS.get(1).getYuShu();
+            Integer currentAvgYuShuNum = statYuShuDTOS.get(1).getCountYuShu();
+            Integer historyMaxYuShu = historyStatYuShuDTOS.get(0).getYuShu();
+            Integer historyMaxYuShuNum = historyStatYuShuDTOS.get(0).getCountYuShu();
+            Integer historyMinYuShu = historyStatYuShuDTOS.get(2).getYuShu();
+            Integer historyMinYuShuNum = historyStatYuShuDTOS.get(2).getCountYuShu();
+            Integer historyAvgYuShu = historyStatYuShuDTOS.get(1).getYuShu();
+            Integer historyAvgYuShuNum = historyStatYuShuDTOS.get(1).getCountYuShu();
+            return getYuCeData(currentMaxYuShu,currentMaxYuShuNum,currentMinYuShu,currentMinYuShuNum,currentAvgYuShu,currentAvgYuShuNum,historyMaxYuShu,historyMaxYuShuNum,historyMinYuShu,historyMinYuShuNum,historyAvgYuShu,historyAvgYuShuNum);
+        } catch (Exception e) {
+            System.out.println(issueno + "参数" + new Gson().toJson(statYuShuDTOS) + "," + new Gson().toJson(historyStatYuShuDTOS));
+        }
+
+        return "";
     }
 
     /**
-     * 获取多少期数据
-     * @param ssqDetailInfoDOS 从哪里获取数据
-     * @param index 当前索引位置
-     * @param size 获取多少期数据
-     * @return 返回传入大小的数据集合
-     * Created by jl on 2021/5/19 16:30.
+     * 获取预测值
+     * @param currentMaxYuShu 最大余数 路数
+     * @param currentMaxYuShuNum 最大余数数值
+     * @param currentMinYuShu 最小余数数值
+     * @param currentMinYuShuNum 最小余数数值
+     * @param currentAvgYuShu 最平均余数数值
+     * @param currentAvgYuShuNum 最平均余数数值
+     * @param historyMaxYuShu 历史最大余数 路数
+     * @param historyMaxYuShuNum 历史最大余数数值
+     * @param historyMinYuShu 历史最小余数数值
+     * @param historyMinYuShuNum 历史最小余数数值
+     * @param historyAvgYuShu 历史最平均余数数值
+     * @param historyAvgYuShuNum 历史最平均余数数值
+     * @return 返回 预测的0,1,2路
+     * Created by jl on 2021/5/26 10:28.
      */
-    public List<SsqDetailInfoDO> getAppointSizeData (List<SsqDetailInfoDO> ssqDetailInfoDOS,int index, int size) {
-        List<SsqDetailInfoDO> tempSsqDetailInfoDOS = new ArrayList<>();
-        int tempIndex = index;
-        for (int i = 0; i < size ; i++) {
-            SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoDOS.get(tempIndex);
-            tempSsqDetailInfoDOS.add(ssqDetailInfoDO);
-            tempIndex++;
-        }
-        return tempSsqDetailInfoDOS;
-    }
+    public String getYuCeData (Integer currentMaxYuShu,
+                               Integer currentMaxYuShuNum,
+                               Integer currentMinYuShu,
+                               Integer currentMinYuShuNum,
+                               Integer currentAvgYuShu,
+                               Integer currentAvgYuShuNum,
+                               Integer historyMaxYuShu,
+                               Integer historyMaxYuShuNum,
+                               Integer historyMinYuShu,
+                               Integer historyMinYuShuNum,
+                               Integer historyAvgYuShu,
+                               Integer historyAvgYuShuNum) {
 
+        StringBuffer sb = new StringBuffer();
 
-    /**
-     * 获取 0,1,2 路平均数
-     * @param ssqDetailInfoDOS 数据源
-     * @param index 获取那个球的比例  从大到小
-     * @return BILieDto
-     * Created by jl on 2021/5/19 16:50.
-     */
-    public List<BILieDto> getBilie (List<SsqDetailInfoDO> ssqDetailInfoDOS,int index) {
-        List<BILieDto> biLieDtos = new ArrayList<>();
-        int tempIndex = index;
-
-        AtomicReference<Integer> zeroNum = new AtomicReference<>(0);
-
-        AtomicReference<Integer> oneNum = new AtomicReference<>(0);
-
-        AtomicReference<Integer> twoNum = new AtomicReference<>(0);
-
-        ssqDetailInfoDOS.forEach(ssqDetailInfoDO -> {
-            String yushu = "";
-            if (tempIndex == 1) {
-                yushu = ssqDetailInfoDO.getAYushu();
-            } else if (tempIndex == 2) {
-                yushu = ssqDetailInfoDO.getBYushu();
-            } else if (tempIndex == 3) {
-                yushu = ssqDetailInfoDO.getCYushu();
-            } else if (tempIndex == 4) {
-                yushu = ssqDetailInfoDO.getDYushu();
-            } else if (tempIndex == 5) {
-                yushu = ssqDetailInfoDO.getEQiu();
-            } else if (tempIndex == 6) {
-                yushu = ssqDetailInfoDO.getFYushu();
-            }
-
-            if (StringUtils.equals(yushu,"0")) {
-                zeroNum.updateAndGet(v -> v + 1);
-            } else if (StringUtils.equals(yushu,"1")) {
-                oneNum.updateAndGet(v -> v + 1);
+        //拿0跟三个当前的比较看谁是0
+        if (currentMaxYuShu.equals(historyMaxYuShu)) {
+            sb.append(currentMaxYuShu);
+            if (currentAvgYuShuNum.equals(historyAvgYuShuNum)) {
+                sb.append("," + currentAvgYuShu);
             } else {
-                twoNum.updateAndGet(v -> v + 1);
+                if (currentAvgYuShuNum > historyAvgYuShuNum) {
+                    sb.append("," + currentAvgYuShu);
+                } else if (currentAvgYuShuNum.equals(historyAvgYuShuNum)) {
+                    sb.append("," + currentAvgYuShu);
+                } else {
+                    sb.append("," + historyAvgYuShu);
+                }
             }
-        });
-        BILieDto zBiLieDto = new BILieDto();
-        zBiLieDto.setNum(zeroNum.get());
-        zBiLieDto.setYuShu("0");
-        biLieDtos.add(zBiLieDto);
+        } else {
+            sb.append(currentMaxYuShu + "," + historyMaxYuShu);
+        }
+        return sb.toString();
 
-        BILieDto oBiLieDto = new BILieDto();
-        oBiLieDto.setNum(oneNum.get());
-        oBiLieDto.setYuShu("1");
-        biLieDtos.add(oBiLieDto);
-
-        BILieDto tBiLieDto = new BILieDto();
-        tBiLieDto.setNum(twoNum.get());
-        tBiLieDto.setYuShu("2");
-        biLieDtos.add(tBiLieDto);
-
-        return biLieDtos;
     }
-
-
-
-
-    public static void main(String[] args) {
-//        MailAccount account = new MailAccount();
-//        account.setHost("smtp.qq.com");
-//        account.setPort(25);
-//        account.setAuth(true);
-//        account.setFrom("296592231@qq.com");
-//        account.setUser("296592231@qq.com");
-//        account.setPass("wyqcrfzgduprbhec"); //密码
-//        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票6行6列预测", "测试", true);
-
-        //System.out.println(printConvert("01,02,03,04,05,06"));
-    }
-
-
 }

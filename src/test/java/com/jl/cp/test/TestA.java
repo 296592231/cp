@@ -26,11 +26,6 @@ public class TestA {
 
     @org.junit.Test
     public void test() {
-        shuangSeQiuJobService.forecast();
-    }
-
-    @org.junit.Test
-    public void yuCeBlue() {
-        System.out.println(shuangSeQiuJobService.yuCeBlue(String.valueOf(2021050)));
+        shuangSeQiuJobService.testForecast();
     }
 }
