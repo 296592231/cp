@@ -117,7 +117,7 @@ public class ShuangSeQiuJobService {
         account.setFrom("296592231@qq.com");
         account.setUser("296592231@qq.com");
         //密码
-        account.setPass("wyqcrfzgduprbhec");
+        account.setPass("nmbnixsaidgtbhjc");
         MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", content, true);
     }
 
