@@ -112,6 +112,8 @@ public class SsqBaseInfoDOCoverter {
             int temp = Integer.parseInt(s);
             if (temp > 10) {
                 sum.addAndGet(Integer.parseInt(s.substring(1)));
+            } else {
+                sum.addAndGet(temp);
             }
         });
         return String.valueOf(sum.get());
@@ -242,13 +244,13 @@ public class SsqBaseInfoDOCoverter {
 
     public static void main(String[] args) {
         List<String> hongQiuLis = new ArrayList<>();
-        hongQiuLis.add("12");
-        hongQiuLis.add("16");
-        hongQiuLis.add("17");
-        hongQiuLis.add("24");
+        hongQiuLis.add("09");
+        hongQiuLis.add("11");
+        hongQiuLis.add("13");
+        hongQiuLis.add("18");
+        hongQiuLis.add("19");
         hongQiuLis.add("28");
-        hongQiuLis.add("29");
-        System.out.println(qiSection(hongQiuLis));
+        System.out.println(tailSum(hongQiuLis));
     }
 
     /**

@@ -486,6 +486,29 @@ public class ShuangSeQiuJobService {
 
         }
     }
+
+
+    /**
+     * 更正尾和
+     * @param
+     * @return
+     * Created by jl on 2021/5/29 17:10.
+     */
+    public void batchUpdateTailSum () {
+        List<SsqDetailInfoDO> detailInfoDOS = ssqDetailInfoMapper.selectAll();
+        detailInfoDOS.forEach(detailInfoDO -> {
+            List<String> list = new ArrayList<>();
+            list.add(detailInfoDO.getAQiu());
+            list.add(detailInfoDO.getBQiu());
+            list.add(detailInfoDO.getCQiu());
+            list.add(detailInfoDO.getDQiu());
+            list.add(detailInfoDO.getEQiu());
+            list.add(detailInfoDO.getFQiu());
+            String sum = SsqBaseInfoDOCoverter.tailSum(list);
+            detailInfoDO.setTailSumValue(sum);
+            ssqDetailInfoMapper.updateByPrimaryKey(detailInfoDO);
+        });
+    }
     
     /**
      * 
