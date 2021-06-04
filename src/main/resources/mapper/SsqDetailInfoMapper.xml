@@ -200,9 +200,9 @@
           `ssq_detail_info`
         WHERE san_section = '${sanSection}' and issueno <= ${issueno})
       ORDER BY issueno DESC
-      LIMIT 0, 20) a
+      LIMIT 1, 5) a
     GROUP BY a.san_section
-    ORDER BY issueno DESC limit 0,4
+    ORDER BY issueno DESC
     ]]>
   </select>
 </mapper>

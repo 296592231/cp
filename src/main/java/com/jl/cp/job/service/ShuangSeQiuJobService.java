@@ -353,8 +353,8 @@ public class ShuangSeQiuJobService {
         paremMap.put("issueno",ssqDetailInfoDO.getIssueno());
         paremMap.put("maxValue",ssqDetailInfoDO.getTailSumValue());
         SumValueDTO tailSumValueDTO = ssqDetailInfoMapper.sumTailSumValue(paremMap);
-        int tailSanMax = tailSumValueDTO.getSumAvgValue() + 15;
-        int tailSanMin = tailSumValueDTO.getSumAvgValue() - 5;
+        int tailSanMax = tailSumValueDTO.getSumAvgValue() + 10;
+        int tailSanMin = tailSumValueDTO.getSumAvgValue() - 8;
 
 
         //查总和

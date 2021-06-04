@@ -79,15 +79,15 @@ public class ShuangSeQiuUtils {
     }
 
     //开奖号码02 04 07 24 25 32
-    public final static int[] prizes = {2,4,7,24,25,32};
+    public final static int[] prizes = {1,9,11,18,32,33};
 
     //尾数和区间
-    public final static int START_MANTISSA_SUM = 22;
-    public final static int END_MANTISSA_SUM = 40;
+    public final static int START_MANTISSA_SUM = 21;
+    public final static int END_MANTISSA_SUM = 39;
 
     //和值区间
-    public final static int START_SUM = 29;
-    public final static int END_SUM = 129;
+    public final static int START_SUM = 63;
+    public final static int END_SUM = 113;
 
     //三区间比（支持多个区间）
     public final static List<int[]> THREE_SECTION = new ArrayList<>();
@@ -100,11 +100,11 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public final static int[][] LU_SHU = new int[][]
-            {{2,1},{2,0},{1,0},{1,2},{1,0},{1,2}};
+            {{2,1},{1,0},{1,0},{1,2},{1,0},{0,2}};
 
     //每个球的区间
     public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{1,2,4},{12,14,17,18,20,21},{13,15,16,18,19,21,22},{23,24,26,27,29,30},{24,25,27,28,30,31},{25,26,28,29,31,32}};
+            {{2,4,8},{6,7,10},{16,19,22},{19,20,22,23,25},{24,25,27,28},{26,27,29,30,32}};
 
     //精选号码
     public final static int[][] SELECTED = new int[][]
@@ -112,7 +112,8 @@ public class ShuangSeQiuUtils {
 
     static {
         //三区间比设置（支持多个区间）
-        THREE_SECTION.add(new int[]{1,2,3});
+        THREE_SECTION.add(new int[]{2,2,2});
+        THREE_SECTION.add(new int[]{2,1,3});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
         SINGLE_AND_DOUBLE.add(new int[]{3,3});
@@ -524,20 +525,20 @@ public class ShuangSeQiuUtils {
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(threeSectionList);
-        //printlnList.addAll(getRandom(luShu,10));
+        LinkedList<int[]> luShu = luShu(sumList);
+        printlnList.addAll(getRandom(luShu,10));
 
         //每个区间
         LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
-        printlnList.addAll(getRandom(eachNumberRangeList,10));
+        //printlnList.addAll(getRandom(eachNumberRangeList,5));
 
         //每个区间
-        LinkedList<int[]> selectedList = selected(luShu);
+       // LinkedList<int[]> selectedList = selected(luShu);
         //printlnList.addAll(getRandom(selectedList,4));
 
         System.out.println(new Gson().toJson(printlnList));
 
-        checkIsPrize(printlnList);
+        checkIsPrize(threeSectionList);
     }
 
     /**
