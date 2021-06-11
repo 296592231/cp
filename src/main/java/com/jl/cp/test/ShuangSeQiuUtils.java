@@ -79,15 +79,15 @@ public class ShuangSeQiuUtils {
     }
 
     //开奖号码02 04 07 24 25 32
-    public final static int[] prizes = {1,9,11,18,32,33};
+    public final static int[] prizes = {4,6,8,15,16,18};
 
     //尾数和区间
-    public final static int START_MANTISSA_SUM = 21;
-    public final static int END_MANTISSA_SUM = 39;
+    public final static int START_MANTISSA_SUM = 18;
+    public final static int END_MANTISSA_SUM = 36;
 
     //和值区间
-    public final static int START_SUM = 63;
-    public final static int END_SUM = 113;
+    public final static int START_SUM = 80;
+    public final static int END_SUM = 130;
 
     //三区间比（支持多个区间）
     public final static List<int[]> THREE_SECTION = new ArrayList<>();
@@ -100,11 +100,11 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public final static int[][] LU_SHU = new int[][]
-            {{2,1},{1,0},{1,0},{1,2},{1,0},{0,2}};
+            {{1,0},{0,1},{0,2},{0,2},{1,2},{0,1}};
 
     //每个球的区间
     public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{2,4,8},{6,7,10},{16,19,22},{19,20,22,23,25},{24,25,27,28},{26,27,29,30,32}};
+            {{1,3},{4,6,10},{10,14,16,20,22},{11,13,14,16,17,19,20,22},{18,20,21,23,24,26,27,29,30},{30,32}};
 
     //精选号码
     public final static int[][] SELECTED = new int[][]
@@ -415,9 +415,21 @@ public class ShuangSeQiuUtils {
             boolean index3Flag = false;
             boolean index4Flag = false;
             boolean index5Flag = false;
+            int zeroCount = 0;
+            int oneCount = 0;
+            int twoCount = 0;
             int[] index0 = LU_SHU[0];
             for (int i : index0) {
                 if (ints[0] % 3 == i) {
+                    if (ints[0] % 3 == 0) {
+                        zeroCount++;
+                    }
+                    if (ints[0] % 3 == 1) {
+                        oneCount++;
+                    }
+                    if (ints[0] % 3 == 2) {
+                        twoCount++;
+                    }
                     index0Flag = true;
                 }
             }
@@ -425,6 +437,15 @@ public class ShuangSeQiuUtils {
             int[] index1 = LU_SHU[1];
             for (int i : index1) {
                 if (ints[1]  % 3 == i) {
+                    if (ints[1] % 3 == 0) {
+                        zeroCount++;
+                    }
+                    if (ints[1] % 3 == 1) {
+                        oneCount++;
+                    }
+                    if (ints[1] % 3 == 2) {
+                        twoCount++;
+                    }
                     index1Flag = true;
                 }
             }
@@ -432,6 +453,15 @@ public class ShuangSeQiuUtils {
             int[] index2 = LU_SHU[2];
             for (int i : index2) {
                 if (ints[2]  % 3 == i) {
+                    if (ints[2] % 3 == 0) {
+                        zeroCount++;
+                    }
+                    if (ints[2] % 3 == 1) {
+                        oneCount++;
+                    }
+                    if (ints[2] % 3 == 2) {
+                        twoCount++;
+                    }
                     index2Flag = true;
                 }
             }
@@ -439,6 +469,15 @@ public class ShuangSeQiuUtils {
             int[] index3 = LU_SHU[3];
             for (int i : index3) {
                 if (ints[3] % 3 == i) {
+                    if (ints[3] % 3 == 0) {
+                        zeroCount++;
+                    }
+                    if (ints[3] % 3 == 1) {
+                        oneCount++;
+                    }
+                    if (ints[3] % 3 == 2) {
+                        twoCount++;
+                    }
                     index3Flag = true;
                 }
             }
@@ -446,6 +485,15 @@ public class ShuangSeQiuUtils {
             int[] index4 = LU_SHU[4];
             for (int i : index4) {
                 if (ints[4] % 3 == i) {
+                    if (ints[4] % 3 == 0) {
+                        zeroCount++;
+                    }
+                    if (ints[4] % 3 == 1) {
+                        oneCount++;
+                    }
+                    if (ints[4] % 3 == 2) {
+                        twoCount++;
+                    }
                     index4Flag = true;
                 }
             }
@@ -453,12 +501,24 @@ public class ShuangSeQiuUtils {
             int[] index5 = LU_SHU[5];
             for (int i : index5) {
                 if (ints[5] % 3 == i) {
+                    if (ints[5] % 3 == 0) {
+                        zeroCount++;
+                    }
+                    if (ints[5] % 3 == 1) {
+                        oneCount++;
+                    }
+                    if (ints[5] % 3 == 2) {
+                        twoCount++;
+                    }
                     index5Flag = true;
                 }
             }
 
             if (index0Flag && index1Flag && index2Flag && index3Flag && index4Flag && index5Flag) {
-                resultList.add(ints);
+                if (zeroCount <= 3 && oneCount <= 4 && twoCount<=4) {
+                    resultList.add(ints);
+                }
+
             }
         }
         System.out.println("每个012路存在的数据总共："+resultList.size() + "条。");
@@ -525,8 +585,8 @@ public class ShuangSeQiuUtils {
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(sumList);
-        printlnList.addAll(getRandom(luShu,10));
+        LinkedList<int[]> luShu = luShu(resultList);
+        printlnList.addAll(getRandom(luShu,2000));
 
         //每个区间
         LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
@@ -538,7 +598,7 @@ public class ShuangSeQiuUtils {
 
         System.out.println(new Gson().toJson(printlnList));
 
-        checkIsPrize(threeSectionList);
+        checkIsPrize(printlnList);
     }
 
     /**
