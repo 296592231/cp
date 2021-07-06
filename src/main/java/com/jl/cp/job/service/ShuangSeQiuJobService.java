@@ -21,6 +21,7 @@ import com.jl.cp.entity.biz.SsqBaseInfoBizDO;
 import com.jl.cp.mapper.SsqBaseInfoMapper;
 import com.jl.cp.mapper.SsqDetailInfoMapper;
 import com.jl.cp.mapper.SsqYuCeMapper;
+import com.jl.cp.test.ShuangSeQiuUtils;
 import com.jl.cp.utils.HttpUtil;
 import com.jl.cp.vo.HttpConverterResponseVO.SsqBaseInfoResponseVO;
 import com.jl.cp.vo.HttpConverterResponseVO.SsqJsBaseResponseVO;
@@ -97,7 +98,11 @@ public class ShuangSeQiuJobService {
             ssqBaseInfoMapper.insert(insertSsqBaseInfoDO);
             SsqDetailInfoDO ssqDetailInfoDO = getSsqDetailInfoDO(insertSsqBaseInfoDO.getNumber(),insertSsqBaseInfoDO.getIssueno());
             ssqDetailInfoMapper.insert(ssqDetailInfoDO);
-            getYuCeData(ssqDetailInfoDO);
+            try {
+                getYuCeData(ssqDetailInfoDO);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -107,8 +112,47 @@ public class ShuangSeQiuJobService {
       * @Remark 手动获取需要查看的数据集合
       */
     public void getYuCeData (SsqDetailInfoDO ssqDetailInfoDO) {
+        Map<String,Object> resultMap = forecas(ssqDetailInfoDO);
+        String str = resultMap.get("sb").toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append(str);
+        //设置和值区间
+        ShuangSeQiuUtils.START_MANTISSA_SUM = Integer.parseInt(resultMap.get("tailSanMin").toString());
+        ShuangSeQiuUtils.END_MANTISSA_SUM = Integer.parseInt(resultMap.get("tailSanMax").toString());
+        //设置尾和区间
+        ShuangSeQiuUtils.START_SUM = Integer.parseInt(resultMap.get("sanMin").toString());
+        ShuangSeQiuUtils.END_SUM = Integer.parseInt(resultMap.get("sanMax").toString());
+        //设置012路
+        String aYuCe = resultMap.get("aYuCe") != null && StringUtils.isNotBlank(resultMap.get("aYuCe").toString()) ? resultMap.get("aYuCe") .toString() : "0,1";
+        String bYuCe = resultMap.get("bYuCe") != null && StringUtils.isNotBlank(resultMap.get("bYuCe").toString()) ? resultMap.get("bYuCe") .toString() : "0,1";
+        String cYuCe = resultMap.get("cYuCe") != null && StringUtils.isNotBlank(resultMap.get("cYuCe").toString()) ? resultMap.get("cYuCe") .toString() : "0,1";
+        String dYuCe = resultMap.get("dYuCe") != null && StringUtils.isNotBlank(resultMap.get("dYuCe").toString()) ? resultMap.get("dYuCe") .toString() : "0,1";
+        String eYuCe = resultMap.get("eYuCe") != null && StringUtils.isNotBlank(resultMap.get("eYuCe").toString()) ? resultMap.get("eYuCe") .toString() : "0,1";
+        String fYuCe = resultMap.get("fYuCe") != null && StringUtils.isNotBlank(resultMap.get("fYuCe").toString()) ? resultMap.get("fYuCe") .toString() : "0,1";
 
-        String content = getContent(forecas(ssqDetailInfoDO));
+        int[] aYuCes = Arrays.stream(aYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] bYuCes = Arrays.stream(bYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] cYuCes = Arrays.stream(cYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] dYuCes = Arrays.stream(dYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] eYuCes = Arrays.stream(eYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] fYuCes = Arrays.stream(fYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+
+        ShuangSeQiuUtils.LU_SHU = new int[][] {aYuCes,bYuCes,cYuCes,dYuCes,eYuCes,fYuCes};
+
+        //生成需要购买的彩票数据
+        LinkedList<int[]> resultList = ShuangSeQiuUtils.getGroupData();
+        //尾数和
+        LinkedList<int[]> mantissaSumList = ShuangSeQiuUtils.mantissaSum(resultList);
+        //在和值区间的双色求号码组
+        LinkedList<int[]> sumList = ShuangSeQiuUtils.getSumList(mantissaSumList);
+        //大小比例
+        LinkedList<int[]> luShu = ShuangSeQiuUtils.luShu(sumList);
+        sb.append("，包含头尾合及012路：" + new Gson().toJson(ShuangSeQiuUtils.getRandom(luShu,10)));
+
+        LinkedList<int[]> luShu1 = ShuangSeQiuUtils.luShu(resultList);
+        sb.append("，不包含012路：" + new Gson().toJson(ShuangSeQiuUtils.getRandom(luShu1,10)));
+        String content = getContent(sb.toString());
+
 
         MailAccount account = new MailAccount();
         account.setHost("smtp.qq.com");
@@ -254,7 +298,7 @@ public class ShuangSeQiuJobService {
      * Created by jl on 2021/5/26 17:29.
      */
 
-    public String forecas (SsqDetailInfoDO ssqDetailInfoDO) {
+    public Map<String,Object> forecas (SsqDetailInfoDO ssqDetailInfoDO) {
         //==============================================查当前===============================================================
         Map<String,Object> paremMap = new HashMap<>();
         //查A余数 得到一个集合排序最大的在第一条
@@ -383,6 +427,19 @@ public class ShuangSeQiuJobService {
         sb.append("，尾和:【"+tailSanMin +"~"+ tailSanMax +"】");
         sb.append("，三区间:【"+new Gson().toJson(sanSectionList)+"】");
 
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("aYuCe",aYuCe);
+        resultMap.put("bYuCe",bYuCe);
+        resultMap.put("cYuCe",cYuCe);
+        resultMap.put("dYuCe",dYuCe);
+        resultMap.put("eYuCe",eYuCe);
+        resultMap.put("fYuCe",fYuCe);
+        resultMap.put("sanMin",sanMin);
+        resultMap.put("sanMax",sanMax);
+        resultMap.put("tailSanMin",tailSanMin);
+        resultMap.put("tailSanMax",tailSanMax);
+        resultMap.put("sb",sb.toString());
+
         Map<String,List<StatYuShuDTO>> stringListMap = new HashMap<>();
         stringListMap.put("aStatYuShuDTOS",aStatYuShuDTOS);
         stringListMap.put("aHistoryStatYuShuDTOS",aHistoryStatYuShuDTOS);
@@ -462,7 +519,7 @@ public class ShuangSeQiuJobService {
         ssqYuCeDO.setOdds(ssqDetailInfoDO.getIssueno());
         ssqYuCeMapper.insert(ssqYuCeDO);
 
-        return sb.toString();
+        return resultMap;
 
     }
 

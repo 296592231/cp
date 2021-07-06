@@ -82,32 +82,32 @@ public class ShuangSeQiuUtils {
     public final static int[] prizes = {4,6,8,15,16,18};
 
     //尾数和区间
-    public final static int START_MANTISSA_SUM = 18;
-    public final static int END_MANTISSA_SUM = 36;
+    public static int START_MANTISSA_SUM = 31;
+    public static int END_MANTISSA_SUM = 39;
 
     //和值区间
-    public final static int START_SUM = 80;
-    public final static int END_SUM = 130;
+    public static int START_SUM = 65;
+    public static int END_SUM = 110;
 
     //三区间比（支持多个区间）
-    public final static List<int[]> THREE_SECTION = new ArrayList<>();
+    public static List<int[]> THREE_SECTION = new ArrayList<>();
 
     //单双比例（支持多个比例）
-    public final static List<int[]> SINGLE_AND_DOUBLE = new ArrayList<>();
+    public static List<int[]> SINGLE_AND_DOUBLE = new ArrayList<>();
 
     //大小比
-    public final static List<int[]> SIZE_RATIO = new ArrayList<>();
+    public static List<int[]> SIZE_RATIO = new ArrayList<>();
 
     //每个球的区间
-    public final static int[][] LU_SHU = new int[][]
-            {{1,0},{0,1},{0,2},{0,2},{1,2},{0,1}};
+    public static int[][] LU_SHU = new int[][]
+            {{1,2},{0,2},{0,1},{0,1},{1,2},{0,2}};
 
     //每个球的区间
-    public final static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{1,3},{4,6,10},{10,14,16,20,22},{11,13,14,16,17,19,20,22},{18,20,21,23,24,26,27,29,30},{30,32}};
+    public static int[][] EACH_NUMBER_RANGE = new int[][]
+            {{2,5,6,8},{3,4,5,8},{7,8,10,11,12,13},{12,14,16,18,20},{17,20,23,24,26,27},{31,32,33}};
 
     //精选号码
-    public final static int[][] SELECTED = new int[][]
+    public static int[][] SELECTED = new int[][]
             {{2,4},{6,7},{7,8,10,11},{12,13,18,19},{14,15,17,18,20,21},{26,27,29,30,32,33}};
 
     static {
@@ -122,6 +122,7 @@ public class ShuangSeQiuUtils {
 
         //大小比例  第一个是大 第二个是小
         SIZE_RATIO.add(new int[]{2,4});
+        SIZE_RATIO.add(new int[]{4,2});
         SIZE_RATIO.add(new int[]{3,3});
     }
 
@@ -559,6 +560,7 @@ public class ShuangSeQiuUtils {
 
 
     public static void main(String[] args) throws FileNotFoundException {
+        for (int i =0 ;i < 8 ;i++) {
 
         //获取33个号码的组合
         LinkedList<int[]> resultList = getGroupData();
@@ -581,16 +583,16 @@ public class ShuangSeQiuUtils {
        // System.out.println(new Gson().toJson(getRandom(singleAndDoubleList,2)));
 
         //大小比例
-        LinkedList<int[]> sizeRatio = getSizeRatio(singleAndDoubleList);
+        LinkedList<int[]> sizeRatio = getSizeRatio(sumList);
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(resultList);
-        printlnList.addAll(getRandom(luShu,2000));
+        LinkedList<int[]> luShu = luShu(sizeRatio);
+        //printlnList.addAll(getRandom(luShu,10));
 
         //每个区间
-        LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
-        //printlnList.addAll(getRandom(eachNumberRangeList,5));
+        LinkedList<int[]> eachNumberRangeList = eachNumberRange(mantissaSumList);
+        printlnList.addAll(getRandom(eachNumberRangeList,10));
 
         //每个区间
        // LinkedList<int[]> selectedList = selected(luShu);
@@ -599,6 +601,7 @@ public class ShuangSeQiuUtils {
         System.out.println(new Gson().toJson(printlnList));
 
         checkIsPrize(printlnList);
+        }
     }
 
     /**
