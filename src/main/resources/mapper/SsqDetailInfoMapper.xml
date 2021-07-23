@@ -93,6 +93,19 @@
         ]]>
   </select>
 
+  <select id="getHistoryShuangSeQiuInfo" parameterType="map" resultType="com.jl.cp.entity.SsqDetailInfoDO">
+    <![CDATA[
+        SELECT
+          ${columnName} aQiu,
+          ${yuShu} aYuShu
+        FROM ssq_detail_info WHERE id IN (
+                SELECT id+1 FROM `ssq_detail_info` WHERE ${columnName} = '${columnValue}' ORDER BY issueno DESC
+          ) ORDER BY issueno DESC
+          limit 0,100
+        ]]>
+
+  </select>
+
   <select id="currentStatYuShuInfo" parameterType="map" resultType="com.jl.cp.dto.StatYuShuDTO">
     <![CDATA[
         select

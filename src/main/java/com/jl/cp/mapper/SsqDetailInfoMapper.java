@@ -53,4 +53,12 @@ public interface SsqDetailInfoMapper extends Mapper<SsqDetailInfoDO> {
      * Created by jl on 2021/5/26 15:06.
      */
     List<String> getSanSectionList(Map<String, Object> paremMap);
+
+    /**
+     * 获取历史列表
+     * @param paremMap 请求参数
+     * @return 返回结果集
+     * Created by jl on 2021/5/26 15:06.
+     */
+    List<SsqDetailInfoDO> getHistoryShuangSeQiuInfo(Map<String, Object> paremMap);
 }

@@ -1,12 +1,10 @@
 package com.jl.cp.test;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @Author LeJiang
@@ -79,11 +77,11 @@ public class ShuangSeQiuUtils {
     }
 
     //开奖号码02 04 07 24 25 32
-    public final static int[] prizes = {4,6,8,15,16,18};
+    public  static int[] prizes = {1,3,5,18,22,23};
 
     //尾数和区间
-    public static int START_MANTISSA_SUM = 31;
-    public static int END_MANTISSA_SUM = 39;
+    public static int START_MANTISSA_SUM = 18;
+    public static int END_MANTISSA_SUM = 36;
 
     //和值区间
     public static int START_SUM = 65;
@@ -100,20 +98,24 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public static int[][] LU_SHU = new int[][]
-            {{1,2},{0,2},{0,1},{0,1},{1,2},{0,2}};
+            {{1,2},{0,2},{0,2},{0,2},{1,2},{0,2}};
 
     //每个球的区间
     public static int[][] EACH_NUMBER_RANGE = new int[][]
             {{2,5,6,8},{3,4,5,8},{7,8,10,11,12,13},{12,14,16,18,20},{17,20,23,24,26,27},{31,32,33}};
 
-    //精选号码
+    /**
+     * 红球第一位通过守号 选2位坐等
+     *
+     *
+     * **/
     public static int[][] SELECTED = new int[][]
-            {{2,4},{6,7},{7,8,10,11},{12,13,18,19},{14,15,17,18,20,21},{26,27,29,30,32,33}};
+            {{2,4},{3,6,7,8,9,10},{5,8,9,11,12},{14,15,16,17,18,19,20},{22,23,24,25,26},{23,24,25,26,27}};
 
     static {
         //三区间比设置（支持多个区间）
-        THREE_SECTION.add(new int[]{2,2,2});
-        THREE_SECTION.add(new int[]{2,1,3});
+//        THREE_SECTION.add(new int[]{2,2,2});
+//        THREE_SECTION.add(new int[]{2,1,3});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
         SINGLE_AND_DOUBLE.add(new int[]{3,3});
@@ -347,44 +349,68 @@ public class ShuangSeQiuUtils {
             boolean index4Flag = false;
             boolean index5Flag = false;
             int[] index0 = SELECTED[0];
-            for (int i : index0) {
-                if (ints[0] == i) {
-                    index0Flag = true;
+            if (index0.length < 1) {
+                index0Flag = true;
+            } else {
+                for (int i : index0) {
+                    if (ints[0] == i) {
+                        index0Flag = true;
+                    }
                 }
             }
 
             int[] index1 = SELECTED[1];
-            for (int i : index1) {
-                if (ints[1] == i) {
-                    index1Flag = true;
+            if (index1.length < 1) {
+                index1Flag = true;
+            } else {
+                for (int i : index1) {
+                    if (ints[1] == i) {
+                        index1Flag = true;
+                    }
                 }
             }
 
             int[] index2 = SELECTED[2];
-            for (int i : index2) {
-                if (ints[2] == i) {
-                    index2Flag = true;
+            if (index2.length < 1) {
+                index2Flag = true;
+            } else {
+                for (int i : index2) {
+                    if (ints[2] == i) {
+                        index2Flag = true;
+                    }
                 }
             }
 
             int[] index3 = SELECTED[3];
-            for (int i : index3) {
-                if (ints[3] == i) {
-                    index3Flag = true;
+            if (index3.length < 1) {
+                index3Flag = true;
+            } else {
+                for (int i : index3) {
+                    if (ints[3] == i) {
+                        index3Flag = true;
+                    }
                 }
             }
 
             int[] index4 = SELECTED[4];
-            for (int i : index4) {
-                if (ints[4] == i) {
-                    index4Flag = true;
+            if (index4.length < 1) {
+                index4Flag = true;
+            } else {
+                for (int i : index4) {
+                    if (ints[4] == i) {
+                        index4Flag = true;
+                    }
                 }
             }
 
             int[] index5 = SELECTED[5];
-            for (int i : index5) {
-                if (ints[5] == i) {
-                    index5Flag = true;
+            if (index5.length < 1) {
+                index5Flag = true;
+            } else {
+                for (int i : index5) {
+                    if (ints[5] == i) {
+                        index5Flag = true;
+                    }
                 }
             }
 
@@ -560,7 +586,6 @@ public class ShuangSeQiuUtils {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-        for (int i =0 ;i < 8 ;i++) {
 
         //获取33个号码的组合
         LinkedList<int[]> resultList = getGroupData();
@@ -587,21 +612,23 @@ public class ShuangSeQiuUtils {
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(sizeRatio);
-        //printlnList.addAll(getRandom(luShu,10));
+        LinkedList<int[]> luShu = luShu(mantissaSumList);
+        LinkedList<int[]> jingxuan = selected(sumList);
+        printlnList.addAll(getRandom(jingxuan,40));
+        checkIsPrize(printlnList);
+        System.out.println(checkIsPrizeNum(printlnList));
 
         //每个区间
-        LinkedList<int[]> eachNumberRangeList = eachNumberRange(mantissaSumList);
-        printlnList.addAll(getRandom(eachNumberRangeList,10));
+        //LinkedList<int[]> eachNumberRangeList = eachNumberRange(mantissaSumList);
+        //printlnList.addAll(getRandom(eachNumberRangeList,10));
 
         //每个区间
-       // LinkedList<int[]> selectedList = selected(luShu);
+        LinkedList<int[]> selectedList = selected(luShu);
         //printlnList.addAll(getRandom(selectedList,4));
 
         System.out.println(new Gson().toJson(printlnList));
 
         checkIsPrize(printlnList);
-        }
     }
 
     /**
@@ -614,9 +641,16 @@ public class ShuangSeQiuUtils {
         Random r = new Random();
         LinkedList<int[]> resultList = new LinkedList<>();
         int size = paramList.size();
+        Iterator<int[]> iterator = paramList.iterator();
         for (int i = 0 ; i < forSize ;i++) {
-            int index = r.nextInt(size);
-            resultList.add(paramList.get(index));
+            int index = r.nextInt(size - forSize);
+            int[] currentObj = paramList.get(index);
+            while (iterator.hasNext()) {
+                if (currentObj == iterator.next()) {
+                    iterator.remove();
+                }
+            }
+            resultList.add(currentObj);
         }
         return resultList;
     }
@@ -656,6 +690,63 @@ public class ShuangSeQiuUtils {
             }
         }
 
+    }
+
+    /**
+     * @Author LeJiang
+     * @CreateOn 2021/1/9 ^ 下午8:30
+     * @Parameter
+     * @Remark 判断中奖号码是否在这个集合中
+     */
+    public static String checkIsPrizeNum (LinkedList<int[]> paramList) {
+
+        StringBuffer sb = new StringBuffer();
+        int fourCount = 0;
+        int fiveCount = 0;
+        int sixCount = 0;
+
+        for (int i= 0 ; i< paramList.size() ; i++) {
+            int[] ints = paramList.get(i);
+            int prizeCount = 0;
+            if (ints[0] == prizes[0]) {
+                prizeCount++;
+            }
+            if (ints[1] == prizes[1]) {
+                prizeCount++;
+            }
+            if (ints[2] == prizes[2]) {
+                prizeCount++;
+            }
+            if (ints[3] == prizes[3]) {
+                prizeCount++;
+            }
+            if (ints[4] == prizes[4]) {
+                prizeCount++;
+            }
+            if (ints[5] == prizes[5]) {
+                prizeCount++;
+            }
+
+            if (prizeCount == 4) {
+                fourCount++;
+            }
+            if (prizeCount == 5) {
+                fiveCount++;
+            }
+            if (prizeCount == 6) {
+                sixCount++;
+            }
+        }
+        if (fourCount > 0) {
+            sb.append(String.format("中4个一个有【%s】",fourCount+""));
+        }
+        if (fiveCount > 0) {
+            sb.append(String.format("中5个一个有【%s】",fiveCount+""));
+        }
+        if (sixCount > 0) {
+            sb.append(String.format("中6个一个有【%s】",sixCount+""));
+        }
+        return sb.toString();
     }
 
 }
