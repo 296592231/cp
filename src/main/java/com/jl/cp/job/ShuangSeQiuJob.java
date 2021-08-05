@@ -55,6 +55,28 @@ public class ShuangSeQiuJob {
         log.info("每周2,4,7晚上23点30分获取最新双色球数据===========>> 结束");
     }
 
+//    /**
+//     * 每次开奖前发送预测号的数据
+//     * Created by jl on 2021/2/27 12:25.
+//     */
+//    @Scheduled(cron = "18 18 18 * * 2,4,7")
+//    public void forecastAndSendMail () {
+//        log.info("每周2,4,7晚上23点30分获取最新双色球数据===========>> 开始");
+//        shuangSeQiuJobService.forecastAndSendMail();
+//        log.info("每周2,4,7晚上23点30分获取最新双色球数据===========>> 结束");
+//    }
+//
+//    /**
+//     * 每隔一段时间扫描是否有人工筛选数据
+//     * Created by jl on 2021/2/27 12:25.
+//     */
+//    @Scheduled(cron = "0 0 2/ * * ?")
+//    public void IntervalScanPredictionData () {
+//        log.info("每隔一段时间扫描是否有人工筛选数据===========>> 开始");
+//        shuangSeQiuJobService.IntervalScanPredictionData();
+//        log.info("每隔一段时间扫描是否有人工筛选数据===========>> 结束");
+//    }
+
 
     /**
      * 批量新增详情数据

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jl.cp.mapper.SsqYuCeLogMapper" >
+  <resultMap id="BaseResultMap" type="com.jl.cp.entity.SsqYuCeLogDO" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="job_a_lu_shu" property="jobALuShu" jdbcType="VARCHAR" />
+    <result column="job_b_lu_shu" property="jobBLuShu" jdbcType="VARCHAR" />
+    <result column="job_c_lu_shu" property="jobCLuShu" jdbcType="VARCHAR" />
+    <result column="job_d_lu_shu" property="jobDLuShu" jdbcType="VARCHAR" />
+    <result column="job_e_lu_shu" property="jobELuShu" jdbcType="VARCHAR" />
+    <result column="job_f_lu_shu" property="jobFLuShu" jdbcType="VARCHAR" />
+    <result column="p_a_lu_shu" property="pALuShu" jdbcType="VARCHAR" />
+    <result column="p_b_lu_shu" property="pBLuShu" jdbcType="VARCHAR" />
+    <result column="p_c_lu_shu" property="pCLuShu" jdbcType="VARCHAR" />
+    <result column="p_d_lu_shu" property="pDLuShu" jdbcType="VARCHAR" />
+    <result column="p_e_lu_shu" property="pELuShu" jdbcType="VARCHAR" />
+    <result column="p_f_lu_shu" property="pFLuShu" jdbcType="VARCHAR" />
+    <result column="job_min_wei_he" property="jobMinWeiHe" jdbcType="BIGINT" />
+    <result column="job_max_wei_he" property="jobMaxWeiHe" jdbcType="BIGINT" />
+    <result column="p_min_wei_he" property="pMinWeiHe" jdbcType="BIGINT" />
+    <result column="p_max_wei_he" property="pMaxWeiHe" jdbcType="BIGINT" />
+    <result column="job_min_zong_he" property="jobMinZongHe" jdbcType="BIGINT" />
+    <result column="job_max_zong_he" property="jobMaxZongHe" jdbcType="BIGINT" />
+    <result column="p_min_zong_he" property="pMinZongHe" jdbcType="BIGINT" />
+    <result column="p_max_zong_he" property="pMaxZongHe" jdbcType="BIGINT" />
+    <result column="p_da_xiao_bi" property="pDaXiaoBi" jdbcType="VARCHAR" />
+    <result column="p_dan_shuang_bi" property="pDanShuangBi" jdbcType="VARCHAR" />
+    <result column="p_a_dan_shuang" property="pADanShuang" jdbcType="VARCHAR" />
+    <result column="p_b_dan_shuang" property="pBDanShuang" jdbcType="VARCHAR" />
+    <result column="p_c_dan_shuang" property="pCDanShuang" jdbcType="VARCHAR" />
+    <result column="p_d_dan_shuang" property="pDDanShuang" jdbcType="VARCHAR" />
+    <result column="p_e_dan_shuang" property="pEDanShuang" jdbcType="VARCHAR" />
+    <result column="p_f_dan_shuang" property="pFDanShuang" jdbcType="VARCHAR" />
+    <result column="p_a_jing_xuan" property="pAJingXuan" jdbcType="VARCHAR" />
+    <result column="p_b_jing_xuan" property="pBJingXuan" jdbcType="VARCHAR" />
+    <result column="p_c_jing_xuan" property="pCJingXuan" jdbcType="VARCHAR" />
+    <result column="p_d_jing_xuan" property="pDJingXuan" jdbcType="VARCHAR" />
+    <result column="p_e_jing_xuan" property="pEJingXuan" jdbcType="VARCHAR" />
+    <result column="p_f_jing_xuan" property="pFJingXuan" jdbcType="VARCHAR" />
+    <result column="issueno" property="issueno" jdbcType="VARCHAR" />
+    <result column="sheng_cheng_hao_ma" property="shengChengHaoMa" jdbcType="VARCHAR" />
+    <result column="is_prize" property="isPrize" jdbcType="INTEGER" />
+    <result column="prize_info" property="prizeInfo" jdbcType="VARCHAR" />
+    <result column="job_is_yu_ce_success" property="jobIsYuCeSuccess" jdbcType="VARCHAR" />
+    <result column="is_send_mail" property="isSendMail" jdbcType="INTEGER" />
+    <result column="is_handle" property="isHandle" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, job_a_lu_shu, job_b_lu_shu, job_c_lu_shu, job_d_lu_shu, job_e_lu_shu, job_f_lu_shu, 
+    p_a_lu_shu, p_b_lu_shu, p_c_lu_shu, p_d_lu_shu, p_e_lu_shu, p_f_lu_shu, job_min_wei_he, 
+    job_max_wei_he, p_min_wei_he, p_max_wei_he, job_min_zong_he, job_max_zong_he, p_min_zong_he, 
+    p_max_zong_he, p_da_xiao_bi, p_dan_shuang_bi, p_a_dan_shuang, p_b_dan_shuang, p_c_dan_shuang, 
+    p_d_dan_shuang, p_e_dan_shuang, p_f_dan_shuang, p_a_jing_xuan, p_b_jing_xuan, p_c_jing_xuan, 
+    p_d_jing_xuan, p_e_jing_xuan, p_f_jing_xuan, issueno, sheng_cheng_hao_ma, is_prize, 
+    prize_info, job_is_yu_ce_success,is_send_mail,is_handle
+  </sql>
+</mapper>

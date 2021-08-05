@@ -153,6 +153,21 @@ public class GenerateShuangSeQiuService {
         //生成想要的数据
         LinkedList<int[]>  printlnList = getRandom(selectedList,requestVO.getNum());
 
+        StringBuffer sb = new StringBuffer();
+        int count  = 1;
+        for (int i = 1; i <= printlnList.size() ; i++) {
+            if (i % 5==0) {
+                sb.append("," + new Gson().toJson(printlnList.get(i-1)) + "-------"+count+"-------");
+                count++;
+            } else {
+                if (StringUtils.isBlank(sb.toString())) {
+                    sb.append(new Gson().toJson(printlnList.get(i-1)));
+                } else {
+                    sb.append("," + new Gson().toJson(printlnList.get(i-1)));
+                }
+            }
+        }
+
         GenerateShuangSeQiuResponseVO responseVO = new GenerateShuangSeQiuResponseVO();
         responseVO.setWhNum(mantissaSumList.size() + "");
         responseVO.setTotalNum(totalList.size() + "");
@@ -161,7 +176,7 @@ public class GenerateShuangSeQiuService {
         responseVO.setLuShuNum(luShu.size() + "");
         responseVO.setDsNum(dsList.size() + "");
         responseVO.setJxNum(selectedList.size() + "");
-        responseVO.setQiuJson(new Gson().toJson(printlnList));
+        responseVO.setQiuJson(sb.toString());
         responseVO.setIsSfbhzj(iszj ? "中奖号码在最终筛选区间" : "中奖号码不在筛选号码中");
         responseVO.setZjxx(checkIsPrizeNum(printlnList,requestVO.getZjhm()));
         return responseVO;

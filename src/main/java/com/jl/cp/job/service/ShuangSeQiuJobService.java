@@ -11,15 +11,18 @@ import cn.hutool.extra.mail.MailUtil;
 import com.google.gson.Gson;
 import com.jl.cp.constants.Constants;
 import com.jl.cp.coverter.SsqBaseInfoDOCoverter;
+import com.jl.cp.coverter.SsqYuCeLogDOCoverter;
 import com.jl.cp.dto.StatYuShuDTO;
 import com.jl.cp.dto.SumValueDTO;
 import com.jl.cp.dto.YuCeDataDTO;
 import com.jl.cp.entity.SsqBaseInfoDO;
 import com.jl.cp.entity.SsqDetailInfoDO;
 import com.jl.cp.entity.SsqYuCeDO;
+import com.jl.cp.entity.SsqYuCeLogDO;
 import com.jl.cp.entity.biz.SsqBaseInfoBizDO;
 import com.jl.cp.mapper.SsqBaseInfoMapper;
 import com.jl.cp.mapper.SsqDetailInfoMapper;
+import com.jl.cp.mapper.SsqYuCeLogMapper;
 import com.jl.cp.mapper.SsqYuCeMapper;
 import com.jl.cp.test.ShuangSeQiuUtils;
 import com.jl.cp.utils.HttpUtil;
@@ -45,6 +48,9 @@ public class ShuangSeQiuJobService {
 
     @Autowired
     private SsqDetailInfoMapper ssqDetailInfoMapper;
+
+    @Autowired
+    private SsqYuCeLogMapper ssqYuCeLogMapper;
 
     @Autowired
     private SsqYuCeMapper ssqYuCeMapper;
@@ -117,11 +123,11 @@ public class ShuangSeQiuJobService {
         StringBuffer sb = new StringBuffer();
         sb.append(str);
         //设置和值区间
-        ShuangSeQiuUtils.START_MANTISSA_SUM = Integer.parseInt(resultMap.get("tailSanMin").toString());
-        ShuangSeQiuUtils.END_MANTISSA_SUM = Integer.parseInt(resultMap.get("tailSanMax").toString());
+        Integer tailSanMin = Integer.parseInt(resultMap.get("tailSanMin").toString());
+        Integer tailSanMax = Integer.parseInt(resultMap.get("tailSanMax").toString());
         //设置尾和区间
-        ShuangSeQiuUtils.START_SUM = Integer.parseInt(resultMap.get("sanMin").toString());
-        ShuangSeQiuUtils.END_SUM = Integer.parseInt(resultMap.get("sanMax").toString());
+        Integer startSum = Integer.parseInt(resultMap.get("sanMin").toString());
+        Integer endSum = Integer.parseInt(resultMap.get("sanMax").toString());
         //设置012路
         String aYuCe = resultMap.get("aYuCe") != null && StringUtils.isNotBlank(resultMap.get("aYuCe").toString()) ? resultMap.get("aYuCe") .toString() : "0,1";
         String bYuCe = resultMap.get("bYuCe") != null && StringUtils.isNotBlank(resultMap.get("bYuCe").toString()) ? resultMap.get("bYuCe") .toString() : "0,1";
@@ -130,39 +136,30 @@ public class ShuangSeQiuJobService {
         String eYuCe = resultMap.get("eYuCe") != null && StringUtils.isNotBlank(resultMap.get("eYuCe").toString()) ? resultMap.get("eYuCe") .toString() : "0,1";
         String fYuCe = resultMap.get("fYuCe") != null && StringUtils.isNotBlank(resultMap.get("fYuCe").toString()) ? resultMap.get("fYuCe") .toString() : "0,1";
 
-        int[] aYuCes = Arrays.stream(aYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
-        int[] bYuCes = Arrays.stream(bYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
-        int[] cYuCes = Arrays.stream(cYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
-        int[] dYuCes = Arrays.stream(dYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
-        int[] eYuCes = Arrays.stream(eYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
-        int[] fYuCes = Arrays.stream(fYuCe.split(",")).mapToInt(Integer::parseInt).toArray();
+        SsqYuCeLogDO ssqYuCeLogDO = new SsqYuCeLogDO();
+        ssqYuCeLogDO.setJobALuShu(aYuCe);
+        ssqYuCeLogDO.setJobBLuShu(bYuCe);
+        ssqYuCeLogDO.setJobCLuShu(cYuCe);
+        ssqYuCeLogDO.setJobDLuShu(dYuCe);
+        ssqYuCeLogDO.setJobELuShu(eYuCe);
+        ssqYuCeLogDO.setJobFLuShu(fYuCe);
+        ssqYuCeLogDO.setJobMinWeiHe(Long.valueOf(startSum));
+        ssqYuCeLogDO.setJobMaxWeiHe(Long.valueOf(endSum));
+        ssqYuCeLogDO.setJobMinZongHe(Long.valueOf(tailSanMin));
+        ssqYuCeLogDO.setJobMaxZongHe(Long.valueOf(tailSanMax));
+        ssqYuCeLogDO.setIssueno(ssqDetailInfoDO.getIssueno());
 
-        ShuangSeQiuUtils.LU_SHU = new int[][] {aYuCes,bYuCes,cYuCes,dYuCes,eYuCes,fYuCes};
+        ssqYuCeLogMapper.insert(ssqYuCeLogDO);
 
-        //生成需要购买的彩票数据
-        LinkedList<int[]> resultList = ShuangSeQiuUtils.getGroupData();
-        //尾数和
-        LinkedList<int[]> mantissaSumList = ShuangSeQiuUtils.mantissaSum(resultList);
-        //在和值区间的双色求号码组
-        LinkedList<int[]> sumList = ShuangSeQiuUtils.getSumList(mantissaSumList);
-        //大小比例
-        LinkedList<int[]> luShu = ShuangSeQiuUtils.luShu(sumList);
-        sb.append("，包含头尾合及012路：" + new Gson().toJson(ShuangSeQiuUtils.getRandom(luShu,10)));
-
-        LinkedList<int[]> luShu1 = ShuangSeQiuUtils.luShu(resultList);
-        sb.append("，不包含012路：" + new Gson().toJson(ShuangSeQiuUtils.getRandom(luShu1,10)));
-        String content = getContent(sb.toString());
-
-
-        MailAccount account = new MailAccount();
-        account.setHost("smtp.qq.com");
-        account.setPort(25);
-        account.setAuth(true);
-        account.setFrom("296592231@qq.com");
-        account.setUser("296592231@qq.com");
-        //密码
-        account.setPass("nmbnixsaidgtbhjc");
-        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", content, true);
+//        MailAccount account = new MailAccount();
+//        account.setHost("smtp.qq.com");
+//        account.setPort(25);
+//        account.setAuth(true);
+//        account.setFrom("296592231@qq.com");
+//        account.setUser("296592231@qq.com");
+//        //密码
+//        account.setPass("nmbnixsaidgtbhjc");
+//        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", content, true);
     }
 
     /**
@@ -646,6 +643,28 @@ public class ShuangSeQiuJobService {
             sb.append(currentMaxYuShu + "," + historyMaxYuShu);
         }
         return sb.toString();
+
+    }
+
+    /**
+     * 每次开奖前发送预测号的数据
+     * Created by jl on 2021/8/5 14:30
+     */
+    public void forecastAndSendMail() {
+
+    }
+
+    /**
+     * 每隔一段时间扫描是否有人工筛选数据
+     * Created by jl on 2021/8/5 14:30
+     */
+    public void IntervalScanPredictionData() {
+        SsqYuCeLogDO ssqYuCeLogDO = new SsqYuCeLogDO();
+        ssqYuCeLogDO.setIsHandle(1);
+        ssqYuCeLogDO.setIsSendMail(1);
+        SsqYuCeLogDO querySsqYuCeLogDO = ssqYuCeLogMapper.selectOne(ssqYuCeLogDO);
+
+
 
     }
 }
