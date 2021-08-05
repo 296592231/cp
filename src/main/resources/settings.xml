@@ -1,0 +1,32 @@
+<settings>
+    <repositories>
+       
+    <repository>
+    <id>nexus-aliyun</id>
+    <name>Nexus aliyun</name>
+    <layout>default</layout>
+    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+    <releases>
+        <enabled>true</enabled>
+    </releases>
+</repository>
+
+	 <repository>
+    <id>nexus-maven</id>
+    <name>Nexus maven</name>
+    <layout>default</layout>
+    <url>https://repo1.maven.org/maven2/</url>
+    <snapshots>
+        <enabled>false</enabled>
+    </snapshots>
+    <releases>
+        <enabled>true</enabled>
+    </releases>
+</repository>
+
+
+    </repositories>
+</settings>
