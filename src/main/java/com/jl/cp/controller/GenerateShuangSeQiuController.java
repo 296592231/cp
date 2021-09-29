@@ -29,6 +29,7 @@ public class GenerateShuangSeQiuController {
      */
     @RequestMapping("viewShuangSeQiu.html")
     public String listUI(Model model) {
+        model.addAttribute("issueno",generateShuangSeQiuService.listUI());
         return "generateTickets";
     }
 

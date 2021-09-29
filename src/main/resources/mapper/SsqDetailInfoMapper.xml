@@ -218,4 +218,15 @@
     ORDER BY issueno DESC
     ]]>
   </select>
+
+
+  <select id="maxIssueno" parameterType="map" resultType="java.lang.String">
+    <![CDATA[
+    SELECT
+      max(issueno)
+    FROM
+      ssq_detail_info
+    ]]>
+  </select>
+
 </mapper>

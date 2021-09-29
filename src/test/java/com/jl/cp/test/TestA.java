@@ -1,11 +1,5 @@
 package com.jl.cp.test;
-
-import com.jl.cp.entity.SsqBaseInfoDO;
-import com.jl.cp.entity.SsqDetailInfoDO;
 import com.jl.cp.job.service.ShuangSeQiuJobService;
-import com.jl.cp.mapper.SsqBaseInfoMapper;
-import com.jl.cp.mapper.SsqDetailInfoMapper;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +24,6 @@ public class TestA {
 
     @org.junit.Test
     public void test() {
-        shuangSeQiuJobService.incrementalUpdate();
+        shuangSeQiuJobService.testForecast();
     }
 }

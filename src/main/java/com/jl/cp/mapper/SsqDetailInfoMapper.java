@@ -61,4 +61,11 @@ public interface SsqDetailInfoMapper extends Mapper<SsqDetailInfoDO> {
      * Created by jl on 2021/5/26 15:06.
      */
     List<SsqDetailInfoDO> getHistoryShuangSeQiuInfo(Map<String, Object> paremMap);
+
+    /**
+     * 查询最大期数
+     * @return
+     * Created by jl on 2021/9/14 10:15
+     */
+    String maxIssueno();
 }

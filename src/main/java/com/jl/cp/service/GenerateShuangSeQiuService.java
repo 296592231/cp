@@ -6,12 +6,14 @@ import com.jl.cp.dto.requestVO.GenerateShuangSeQiuRequestVO;
 import com.jl.cp.dto.requestVO.QueryHistoryRequestVO;
 import com.jl.cp.dto.responseVO.GenerateShuangSeQiuResponseVO;
 import com.jl.cp.entity.SsqDetailInfoDO;
+import com.jl.cp.entity.SsqYuCeLogDO;
 import com.jl.cp.mapper.SsqDetailInfoMapper;
+import com.jl.cp.mapper.SsqYuCeLogMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -25,6 +27,15 @@ public class GenerateShuangSeQiuService {
 
     @Autowired
     private SsqDetailInfoMapper ssqDetailInfoMapper;
+
+    @Autowired
+    private SsqYuCeLogMapper ssqYuCeLogMapper;
+
+
+    public String listUI() {
+        //查询最大期数
+        return ssqDetailInfoMapper.maxIssueno();
+    }
 
     public Object queryHistory(QueryHistoryRequestVO requestVO) throws Exception {
         String weiZhi = "";
@@ -146,6 +157,15 @@ public class GenerateShuangSeQiuService {
                         analysis1(requestVO.getJx6(),false)};
         LinkedList<int[]> selectedList = selected(dsList,selected);
 
+        GenerateShuangSeQiuResponseVO responseVO = new GenerateShuangSeQiuResponseVO();
+        responseVO.setWhNum(mantissaSumList.size() + "");
+        responseVO.setTotalNum(totalList.size() + "");
+        responseVO.setDxbNum(sizeRatio.size() + "");
+        responseVO.setDsbNum(singleAndDoubleList.size() + "");
+        responseVO.setLuShuNum(luShu.size() + "");
+        responseVO.setDsNum(dsList.size() + "");
+        responseVO.setJxNum(selectedList.size() + "");
+
 
         //校验是否包含中奖号码
         boolean iszj = checkIsPrize(selectedList,requestVO.getZjhm());
@@ -168,17 +188,43 @@ public class GenerateShuangSeQiuService {
             }
         }
 
-        GenerateShuangSeQiuResponseVO responseVO = new GenerateShuangSeQiuResponseVO();
-        responseVO.setWhNum(mantissaSumList.size() + "");
-        responseVO.setTotalNum(totalList.size() + "");
-        responseVO.setDxbNum(sizeRatio.size() + "");
-        responseVO.setDsbNum(singleAndDoubleList.size() + "");
-        responseVO.setLuShuNum(luShu.size() + "");
-        responseVO.setDsNum(dsList.size() + "");
-        responseVO.setJxNum(selectedList.size() + "");
+
         responseVO.setQiuJson(sb.toString());
         responseVO.setIsSfbhzj(iszj ? "中奖号码在最终筛选区间" : "中奖号码不在筛选号码中");
         responseVO.setZjxx(checkIsPrizeNum(printlnList,requestVO.getZjhm()));
+
+        SsqYuCeLogDO queryDO = new SsqYuCeLogDO();
+        queryDO.setIssueno(requestVO.getIssueno());
+        SsqYuCeLogDO ssqYuCeLogDO = ssqYuCeLogMapper.selectOne(queryDO);
+        ssqYuCeLogDO.setPALuShu(requestVO.getLuShu1());
+        ssqYuCeLogDO.setPBLuShu(requestVO.getLuShu2());
+        ssqYuCeLogDO.setPCLuShu(requestVO.getLuShu3());
+        ssqYuCeLogDO.setPDLuShu(requestVO.getLuShu4());
+        ssqYuCeLogDO.setPELuShu(requestVO.getLuShu5());
+        ssqYuCeLogDO.setPFLuShu(requestVO.getLuShu6());
+        ssqYuCeLogDO.setPMinWeiHe(requestVO.getMinWh() == null? null : Long.parseLong(requestVO.getMinWh()+""));
+        ssqYuCeLogDO.setPMaxWeiHe(requestVO.getMaxWh() == null? null : Long.parseLong(requestVO.getMaxWh()+""));
+        ssqYuCeLogDO.setPMinZongHe(requestVO.getTotalMinWh() == null? null : Long.parseLong(requestVO.getTotalMinWh()+""));
+        ssqYuCeLogDO.setPMaxZongHe(requestVO.getTotalMaxWh() == null? null : Long.parseLong(requestVO.getTotalMaxWh()+""));
+        ssqYuCeLogDO.setPDaXiaoBi(requestVO.getDsb());
+        ssqYuCeLogDO.setPDanShuangBi(requestVO.getDsb());
+        ssqYuCeLogDO.setPADanShuang(requestVO.getDs1());
+        ssqYuCeLogDO.setPBDanShuang(requestVO.getDs2());
+        ssqYuCeLogDO.setPCDanShuang(requestVO.getDs3());
+        ssqYuCeLogDO.setPDDanShuang(requestVO.getDs4());
+        ssqYuCeLogDO.setPEDanShuang(requestVO.getDs5());
+        ssqYuCeLogDO.setPFDanShuang(requestVO.getDs6());
+        ssqYuCeLogDO.setPAJingXuan(requestVO.getJx1());
+        ssqYuCeLogDO.setPBJingXuan(requestVO.getJx2());
+        ssqYuCeLogDO.setPCJingXuan(requestVO.getJx3());
+        ssqYuCeLogDO.setPDJingXuan(requestVO.getJx4());
+        ssqYuCeLogDO.setPEJingXuan(requestVO.getJx5());
+        ssqYuCeLogDO.setPFJingXuan(requestVO.getJx6());
+        ssqYuCeLogDO.setIssueno(requestVO.getIssueno());
+        ssqYuCeLogDO.setShengChengHaoMa(sb.toString());
+        Example example = new Example(SsqYuCeLogDO.class);
+        example.createCriteria().andEqualTo("id",ssqYuCeLogDO.getId());
+        ssqYuCeLogMapper.updateByExample(ssqYuCeLogDO,example);
         return responseVO;
     }
 
@@ -793,14 +839,14 @@ public class GenerateShuangSeQiuService {
      * @Remark 随机从结果集中选出12注做为投注
      */
     public LinkedList<int[]> getRandom(LinkedList<int[]> paramList,int forSize) {
-
         Random r = new Random();
         LinkedList<int[]> resultList = new LinkedList<>();
-        int size = paramList.size();
-        Iterator<int[]> iterator = paramList.iterator();
+
         for (int i = 0 ; i < forSize ;i++) {
-            int index = r.nextInt(size - forSize);
+            int size = paramList.size();
+            int index = r.nextInt(size);
             int[] currentObj = paramList.get(index);
+            Iterator<int[]> iterator = paramList.iterator();
             while (iterator.hasNext()) {
                 if (currentObj == iterator.next()) {
                     iterator.remove();
@@ -926,6 +972,4 @@ public class GenerateShuangSeQiuService {
             return "";
         }
     }
-
-
 }

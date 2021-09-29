@@ -11,6 +11,8 @@ import lombok.Setter;
 @Setter
 public class GenerateShuangSeQiuRequestVO {
 
+    private String issueno;
+
     /**中奖号码**/
     private String zjhm;
 

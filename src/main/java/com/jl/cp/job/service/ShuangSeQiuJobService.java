@@ -151,15 +151,15 @@ public class ShuangSeQiuJobService {
 
         ssqYuCeLogMapper.insert(ssqYuCeLogDO);
 
-//        MailAccount account = new MailAccount();
-//        account.setHost("smtp.qq.com");
-//        account.setPort(25);
-//        account.setAuth(true);
-//        account.setFrom("296592231@qq.com");
-//        account.setUser("296592231@qq.com");
-//        //密码
-//        account.setPass("nmbnixsaidgtbhjc");
-//        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", content, true);
+        MailAccount account = new MailAccount();
+        account.setHost("smtp.qq.com");
+        account.setPort(25);
+        account.setAuth(true);
+        account.setFrom("296592231@qq.com");
+        account.setUser("296592231@qq.com");
+        //密码
+        account.setPass("nmbnixsaidgtbhjc");
+        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", str, true);
     }
 
     /**
@@ -535,7 +535,38 @@ public class ShuangSeQiuJobService {
         if (CollectionUtil.isNotEmpty(allSsqDetailInfoDOS)) {
 
             for (SsqDetailInfoDO ssqDetailInfoDO : allSsqDetailInfoDOS) {
-                forecas(ssqDetailInfoDO);
+                Map<String,Object> resultMap = forecas(ssqDetailInfoDO);
+                String str = resultMap.get("sb").toString();
+                StringBuffer sb = new StringBuffer();
+                sb.append(str);
+                //设置和值区间
+                Integer tailSanMin = Integer.parseInt(resultMap.get("tailSanMin").toString());
+                Integer tailSanMax = Integer.parseInt(resultMap.get("tailSanMax").toString());
+                //设置尾和区间
+                Integer startSum = Integer.parseInt(resultMap.get("sanMin").toString());
+                Integer endSum = Integer.parseInt(resultMap.get("sanMax").toString());
+                //设置012路
+                String aYuCe = resultMap.get("aYuCe") != null && StringUtils.isNotBlank(resultMap.get("aYuCe").toString()) ? resultMap.get("aYuCe") .toString() : "0,1";
+                String bYuCe = resultMap.get("bYuCe") != null && StringUtils.isNotBlank(resultMap.get("bYuCe").toString()) ? resultMap.get("bYuCe") .toString() : "0,1";
+                String cYuCe = resultMap.get("cYuCe") != null && StringUtils.isNotBlank(resultMap.get("cYuCe").toString()) ? resultMap.get("cYuCe") .toString() : "0,1";
+                String dYuCe = resultMap.get("dYuCe") != null && StringUtils.isNotBlank(resultMap.get("dYuCe").toString()) ? resultMap.get("dYuCe") .toString() : "0,1";
+                String eYuCe = resultMap.get("eYuCe") != null && StringUtils.isNotBlank(resultMap.get("eYuCe").toString()) ? resultMap.get("eYuCe") .toString() : "0,1";
+                String fYuCe = resultMap.get("fYuCe") != null && StringUtils.isNotBlank(resultMap.get("fYuCe").toString()) ? resultMap.get("fYuCe") .toString() : "0,1";
+
+                SsqYuCeLogDO ssqYuCeLogDO = new SsqYuCeLogDO();
+                ssqYuCeLogDO.setJobALuShu(aYuCe);
+                ssqYuCeLogDO.setJobBLuShu(bYuCe);
+                ssqYuCeLogDO.setJobCLuShu(cYuCe);
+                ssqYuCeLogDO.setJobDLuShu(dYuCe);
+                ssqYuCeLogDO.setJobELuShu(eYuCe);
+                ssqYuCeLogDO.setJobFLuShu(fYuCe);
+                ssqYuCeLogDO.setJobMinWeiHe(Long.valueOf(startSum));
+                ssqYuCeLogDO.setJobMaxWeiHe(Long.valueOf(endSum));
+                ssqYuCeLogDO.setJobMinZongHe(Long.valueOf(tailSanMin));
+                ssqYuCeLogDO.setJobMaxZongHe(Long.valueOf(tailSanMax));
+                ssqYuCeLogDO.setIssueno(ssqDetailInfoDO.getIssueno());
+
+                ssqYuCeLogMapper.insert(ssqYuCeLogDO);
             }
 
         }
