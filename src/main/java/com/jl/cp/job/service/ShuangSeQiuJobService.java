@@ -24,7 +24,7 @@ import com.jl.cp.mapper.SsqBaseInfoMapper;
 import com.jl.cp.mapper.SsqDetailInfoMapper;
 import com.jl.cp.mapper.SsqYuCeLogMapper;
 import com.jl.cp.mapper.SsqYuCeMapper;
-import com.jl.cp.test.ShuangSeQiuUtils;
+import com.jl.cp.service.GenerateShuangSeQiuService;
 import com.jl.cp.utils.HttpUtil;
 import com.jl.cp.vo.HttpConverterResponseVO.SsqBaseInfoResponseVO;
 import com.jl.cp.vo.HttpConverterResponseVO.SsqJsBaseResponseVO;
@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 
@@ -54,6 +55,9 @@ public class ShuangSeQiuJobService {
 
     @Autowired
     private SsqYuCeMapper ssqYuCeMapper;
+
+    @Autowired
+    private GenerateShuangSeQiuService generateShuangSeQiuService;
 
     public void initSsqData() {
         //获取1000期彩票数据
@@ -125,7 +129,7 @@ public class ShuangSeQiuJobService {
         //设置和值区间
         Integer tailSanMin = Integer.parseInt(resultMap.get("tailSanMin").toString());
         Integer tailSanMax = Integer.parseInt(resultMap.get("tailSanMax").toString());
-        //设置尾和区间
+        //设置总和和区间
         Integer startSum = Integer.parseInt(resultMap.get("sanMin").toString());
         Integer endSum = Integer.parseInt(resultMap.get("sanMax").toString());
         //设置012路
@@ -135,6 +139,28 @@ public class ShuangSeQiuJobService {
         String dYuCe = resultMap.get("dYuCe") != null && StringUtils.isNotBlank(resultMap.get("dYuCe").toString()) ? resultMap.get("dYuCe") .toString() : "0,1";
         String eYuCe = resultMap.get("eYuCe") != null && StringUtils.isNotBlank(resultMap.get("eYuCe").toString()) ? resultMap.get("eYuCe") .toString() : "0,1";
         String fYuCe = resultMap.get("fYuCe") != null && StringUtils.isNotBlank(resultMap.get("fYuCe").toString()) ? resultMap.get("fYuCe") .toString() : "0,1";
+
+        LinkedList<int[]> resultList = generateShuangSeQiuService.getGroupData();
+
+        LinkedList<int[]> mantissaSumList = generateShuangSeQiuService.mantissaSum(resultList,tailSanMin,tailSanMax);
+
+        //在和值区间的双色求号码组
+        LinkedList<int[]> totalList = generateShuangSeQiuService.getSumList(mantissaSumList,startSum,endSum);
+
+        //路数
+        int[][] reqLushu = new int[][]{generateShuangSeQiuService.analysis1(aYuCe,false),
+                generateShuangSeQiuService.analysis1(bYuCe,false),
+                generateShuangSeQiuService.analysis1(cYuCe,false),
+                generateShuangSeQiuService.analysis1(dYuCe,false),
+                generateShuangSeQiuService.analysis1(eYuCe,false),
+                generateShuangSeQiuService.analysis1(fYuCe,false)};
+        LinkedList<int[]> luShu = generateShuangSeQiuService.luShu(totalList,reqLushu);
+
+        //生成想要的数据
+        LinkedList<int[]>  printlnList = generateShuangSeQiuService.getRandom(luShu,5);
+
+        String shengChengHaoMa = new Gson().toJson(printlnList);
+        str += "预测号码：" + shengChengHaoMa;
 
         SsqYuCeLogDO ssqYuCeLogDO = new SsqYuCeLogDO();
         ssqYuCeLogDO.setJobALuShu(aYuCe);
@@ -148,6 +174,9 @@ public class ShuangSeQiuJobService {
         ssqYuCeLogDO.setJobMinZongHe(Long.valueOf(tailSanMin));
         ssqYuCeLogDO.setJobMaxZongHe(Long.valueOf(tailSanMax));
         ssqYuCeLogDO.setIssueno(ssqDetailInfoDO.getIssueno());
+        ssqYuCeLogDO.setShengChengHaoMa(shengChengHaoMa);
+        ssqYuCeLogDO.setIsHandle(1);
+        ssqYuCeLogDO.setIsSendMail(1);
 
         ssqYuCeLogMapper.insert(ssqYuCeLogDO);
 
@@ -159,7 +188,7 @@ public class ShuangSeQiuJobService {
         account.setUser("296592231@qq.com");
         //密码
         account.setPass("nmbnixsaidgtbhjc");
-        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", str, true);
+        MailUtil.send(account, CollUtil.newArrayList("296592231@qq.com"), "彩票012路加三区间加和值加尾和预测", str , true);
     }
 
     /**
@@ -697,5 +726,56 @@ public class ShuangSeQiuJobService {
 
 
 
+    }
+
+    public void updateWhetherToWinTheLottery() {
+        SsqYuCeLogDO querySsqYuCeLogDO = new SsqYuCeLogDO();
+        querySsqYuCeLogDO.setIsHandle(1);
+        List<SsqYuCeLogDO> ssqYuCeLogDOS = ssqYuCeLogMapper.select(querySsqYuCeLogDO);
+        if (CollectionUtil.isNotEmpty(ssqYuCeLogDOS)) {
+            for (SsqYuCeLogDO ssqYuCeLogDO : ssqYuCeLogDOS) {
+                SsqDetailInfoDO querySsqDetailInfoDO = new SsqDetailInfoDO();
+                querySsqDetailInfoDO.setIssueno(ssqYuCeLogDO.getIssueno());
+                SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoMapper.selectOne(querySsqDetailInfoDO);
+                if (ssqDetailInfoDO != null) {
+                    StringBuffer isin = new StringBuffer();
+                    int isIn = 0;
+                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobALuShu()) && ssqYuCeLogDO.getJobALuShu().contains(ssqDetailInfoDO.getAYushu())) {
+                        isIn += 1;
+                    }
+                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobBLuShu()) && ssqYuCeLogDO.getJobBLuShu().contains(ssqDetailInfoDO.getBYushu())) {
+                        isIn += 1;
+                    }
+                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobCLuShu()) && ssqYuCeLogDO.getJobCLuShu().contains(ssqDetailInfoDO.getCYushu())) {
+                        isIn += 1;
+                    }
+                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobDLuShu()) && ssqYuCeLogDO.getJobDLuShu().contains(ssqDetailInfoDO.getDYushu())) {
+                        isIn += 1;
+                    }
+                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobELuShu()) && ssqYuCeLogDO.getJobELuShu().contains(ssqDetailInfoDO.getEYushu())) {
+                        isIn += 1;
+                    }
+                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobFLuShu()) && ssqYuCeLogDO.getJobFLuShu().contains(ssqDetailInfoDO.getFYushu())) {
+                        isIn += 1;
+                    }
+                    isin.append("余数中："+isIn);
+                    int tailSumValue = Integer.parseInt(ssqDetailInfoDO.getTailSumValue());
+                    if (tailSumValue >= ssqYuCeLogDO.getJobMinZongHe() && tailSumValue <= ssqYuCeLogDO.getJobMaxZongHe()) {
+                        isin.append("--在尾和区间");
+                    }
+
+                    int sumValue = Integer.parseInt(ssqDetailInfoDO.getSumValue());
+                    if (sumValue >= ssqYuCeLogDO.getJobMinWeiHe() && sumValue <= ssqYuCeLogDO.getJobMaxWeiHe()) {
+                        isin.append("--在总和区间");
+                    }
+
+                    ssqYuCeLogDO.setIsHandle(0);
+                    ssqYuCeLogDO.setJobIsYuCeSuccess(isin.toString());
+                    Example example = new Example(SsqYuCeLogDO.class);
+                    example.createCriteria().andEqualTo("id",ssqYuCeLogDO.getId());
+                    ssqYuCeLogMapper.updateByExample(ssqYuCeLogDO,example);
+                }
+            }
+        }
     }
 }

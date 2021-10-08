@@ -55,6 +55,17 @@ public class ShuangSeQiuJob {
         log.info("每周2,4,7晚上23点30分获取最新双色球数据===========>> 结束");
     }
 
+    /**
+     * 更新是否中奖
+     * Created by jl on 2021/2/27 12:25.
+     */
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void updateWhetherToWinTheLottery () {
+        log.info("更新是否中奖===========>> 开始");
+        shuangSeQiuJobService.updateWhetherToWinTheLottery();
+        log.info("更新是否中奖===========>> 结束");
+    }
+
 //    /**
 //     * 每次开奖前发送预测号的数据
 //     * Created by jl on 2021/2/27 12:25.
