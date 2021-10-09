@@ -18,6 +18,7 @@
         <java.version>1.8</java.version>
         <javaee-api.version>7.0</javaee-api.version>
     </properties>
+
     <dependencies>
         <!--jsp页面使用jstl标签-->
         <dependency>
