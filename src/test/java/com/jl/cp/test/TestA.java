@@ -24,6 +24,6 @@ public class TestA {
 
     @org.junit.Test
     public void test() {
-        shuangSeQiuJobService.testForecast();
+        shuangSeQiuJobService.updateWhetherToWinTheLottery();
     }
 }

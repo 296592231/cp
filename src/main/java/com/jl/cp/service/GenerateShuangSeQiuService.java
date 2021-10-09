@@ -32,9 +32,18 @@ public class GenerateShuangSeQiuService {
     private SsqYuCeLogMapper ssqYuCeLogMapper;
 
 
-    public String listUI() {
+    public SsqYuCeLogDO listUI() {
+        SsqYuCeLogDO queryDO = new SsqYuCeLogDO();
+        queryDO.setIssueno(ssqDetailInfoMapper.maxIssueno());
+        SsqYuCeLogDO ssqYuCeLogDO = ssqYuCeLogMapper.selectOne(queryDO);
+        if (ssqYuCeLogDO == null) {
+            ssqYuCeLogDO = new SsqYuCeLogDO();
+        } else {
+
+        }
+
         //查询最大期数
-        return ssqDetailInfoMapper.maxIssueno();
+        return ssqYuCeLogDO;
     }
 
     public Object queryHistory(QueryHistoryRequestVO requestVO) throws Exception {

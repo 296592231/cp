@@ -1,7 +1,7 @@
 env:
   mysql:
     driver: com.mysql.jdbc.Driver
-    url: jdbc:mysql://144.34.200.171:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true
+    url: jdbc:mysql://127.0.0.1:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true
     username: root
     password: EVeHEai6i/6aMPxll7+YNoVH14EgjDvi19Cd9Gmi7elCbUPR+YzNYUgmowc50mqIuYJ4SH9eRrezQYwpy2V1Fg==
     publickey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALPeBr+KF3+3YpDTsuTDJnfih9lYMzWjVo744mfgYUL4maIx5H2xNGJOZmfOCRjTXjr1nvXEdEs6MYSgQDlV+O0CAwEAAQ==

@@ -12,7 +12,7 @@ spring:
 
       type: com.alibaba.druid.pool.DruidDataSource
       driverClassName: com.mysql.jdbc.Driver
-      url: jdbc:mysql://144.34.200.171:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true&useSSL=false&serverTimezone=UTC
+      url: jdbc:mysql://127.0.0.1:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true&useSSL=false&serverTimezone=UTC
       username: root
       password: root
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000;config.decrypt=true    #数据库密码加密

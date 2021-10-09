@@ -46,11 +46,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${javaee-api.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
@@ -172,10 +167,52 @@
         </dependency>
     </dependencies>
 
+<!--打包时使用这个-->
     <build>
         <plugins>
             <plugin>
-                <!-- maven插件 -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.4.2.RELEASE</version>
+                <configuration>
+                    <!-- 设置启动类 -->
+                    <mainClass>com.jl.cp.CpApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <!--这里必须是META-INF/resources-->
+                <targetPath>META-INF/resources</targetPath>
+                <includes>
+                    <include>**/*.jsp</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>BOOT-INF/classes</targetPath>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+
+<!--调试时使用这套-->
+    <!--<build>
+        <plugins>
+            <plugin>
+                &lt;!&ndash; maven插件 &ndash;&gt;
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
@@ -189,9 +226,9 @@
             </plugin>
         </plugins>
         <resources>
-            <!-- 此处最为重要-否则打包后没有你的JSP页面模板，一定要记得写为资源文件 targetPath 设置必须是 META-INF/resources
+            &lt;!&ndash; 此处最为重要-否则打包后没有你的JSP页面模板，一定要记得写为资源文件 targetPath 设置必须是 META-INF/resources
 
-            我项目做出来的时候因为没写resources导致打包运行后正常启动，各个接口也都正常访问，但是所有的jsp页面都会报404，找不到页面 ，因为这个问题浪费了我大半天时间-->
+            我项目做出来的时候因为没写resources导致打包运行后正常启动，各个接口也都正常访问，但是所有的jsp页面都会报404，找不到页面 ，因为这个问题浪费了我大半天时间&ndash;&gt;
 
             <resource>
                 <directory>src/main/webapp</directory>
@@ -205,6 +242,6 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-    </build>
+    </build>-->
 
 </project>

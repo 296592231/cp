@@ -23,7 +23,7 @@
                 <tr>
                     <th>当前期数：</th>
                     <td>
-                        <input type="text" id="issueno" name="issueno" value="${issueno}" disabled>
+                        <input type="text" id="issueno" name="issueno" value="${ssqYuCeLogDO.issueno}" disabled>
                     </td>
                 </tr>
                 <tr>
@@ -56,31 +56,31 @@
             <tr>
                 <th>生成条数：</th>
                 <td>
-                    <input type="text" id="num" name="num" >
+                    <input type="text" id="num" name="num" value="5">
                 </td>
             </tr>
             <tr>
                 <th>尾和最小值：</th>
                 <td>
-                    <input type="text" id="minWh" name="minWh" >
+                    <input type="text" id="minWh" name="minWh" value="${ssqYuCeLogDO.jobMinZongHe}" >
                 </td>
             </tr>
             <tr>
                 <th>尾和最大值：</th>
                 <td>
-                    <input type="text" id="maxWh" name="maxWh" >
+                    <input type="text" id="maxWh" name="maxWh" value="${ssqYuCeLogDO.jobMaxZongHe}" >
                 </td>
             </tr>
             <tr>
                 <th>总和最小值：</th>
                 <td>
-                    <input type="text" id="totalMinWh" name="totalMinWh" >
+                    <input type="text" id="totalMinWh" name="totalMinWh" value="${ssqYuCeLogDO.jobMinWeiHe}" >
                 </td>
             </tr>
             <tr>
                 <th>总和最大值：</th>
                 <td>
-                    <input type="text" id="totalMaxWh" name="totalMaxWh" >
+                    <input type="text" id="totalMaxWh" name="totalMaxWh" value="${ssqYuCeLogDO.jobMaxWeiHe}" >
                 </td>
             </tr>
             <tr>
@@ -98,37 +98,37 @@
             <tr>
                 <th>012第一位：</th>
                 <td>
-                    <input type="text" id="luShu1" name="luShu1" >
+                    <input type="text" id="luShu1" name="luShu1" value="${ssqYuCeLogDO.jobALuShu}" >
                 </td>
             </tr>
             <tr>
                 <th>012第二位：</th>
                 <td>
-                    <input type="text" id="luShu2" name="luShu2" >
+                    <input type="text" id="luShu2" name="luShu2" value="${ssqYuCeLogDO.jobBLuShu}" >
                 </td>
             </tr>
             <tr>
                 <th>012第三位：</th>
                 <td>
-                    <input type="text" id="luShu3" name="luShu3" >
+                    <input type="text" id="luShu3" name="luShu3" value="${ssqYuCeLogDO.jobCLuShu}" >
                 </td>
             </tr>
             <tr>
                 <th>012第四位：</th>
                 <td>
-                    <input type="text" id="luShu4" name="luShu4" >
+                    <input type="text" id="luShu4" name="luShu4" value="${ssqYuCeLogDO.jobDLuShu}" >
                 </td>
             </tr>
             <tr>
                 <th>012第五位：</th>
                 <td>
-                    <input type="text" id="luShu5" name="luShu5" >
+                    <input type="text" id="luShu5" name="luShu5" value="${ssqYuCeLogDO.jobELuShu}" >
                 </td>
             </tr>
             <tr>
                 <th>012第六位：</th>
                 <td>
-                    <input type="text" id="luShu6" name="luShu6" >
+                    <input type="text" id="luShu6" name="luShu6" value="${ssqYuCeLogDO.jobFLuShu}" >
                 </td>
             </tr>
             <tr>
