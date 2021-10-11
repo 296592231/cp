@@ -211,7 +211,7 @@
 <div id="showData">
 </div>
 </body>
-<script type="text/javascript" src="http://127.0.0.1:8080/static/jquery/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/2.2.4/jquery-2.2.4.js"></script>
 <script>
     function regist() {
         var num = $("#num").val();
@@ -222,7 +222,7 @@
         var parameters = getRequestParam("nonsupportDiv");
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/admin/generate/generate.html",
+            url: "http://144.34.200.171:8080/admin/generate/generate.html",
             dataType: "json",
             data: parameters,
             success: function (data) {

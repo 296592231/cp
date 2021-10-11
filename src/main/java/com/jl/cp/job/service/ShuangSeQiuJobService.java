@@ -727,53 +727,62 @@ public class ShuangSeQiuJobService {
     }
 
     public void updateWhetherToWinTheLottery() {
-        SsqYuCeLogDO querySsqYuCeLogDO = new SsqYuCeLogDO();
-        querySsqYuCeLogDO.setIsHandle(1);
-        List<SsqYuCeLogDO> ssqYuCeLogDOS = ssqYuCeLogMapper.select(querySsqYuCeLogDO);
-        if (CollectionUtil.isNotEmpty(ssqYuCeLogDOS)) {
-            for (SsqYuCeLogDO ssqYuCeLogDO : ssqYuCeLogDOS) {
-                SsqDetailInfoDO querySsqDetailInfoDO = new SsqDetailInfoDO();
-                querySsqDetailInfoDO.setIssueno(ssqYuCeLogDO.getIssueno());
-                SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoMapper.selectOne(querySsqDetailInfoDO);
-                if (ssqDetailInfoDO != null) {
-                    StringBuffer isin = new StringBuffer();
-                    int isIn = 0;
-                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobALuShu()) && ssqYuCeLogDO.getJobALuShu().contains(ssqDetailInfoDO.getAYushu())) {
-                        isIn += 1;
-                    }
-                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobBLuShu()) && ssqYuCeLogDO.getJobBLuShu().contains(ssqDetailInfoDO.getBYushu())) {
-                        isIn += 1;
-                    }
-                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobCLuShu()) && ssqYuCeLogDO.getJobCLuShu().contains(ssqDetailInfoDO.getCYushu())) {
-                        isIn += 1;
-                    }
-                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobDLuShu()) && ssqYuCeLogDO.getJobDLuShu().contains(ssqDetailInfoDO.getDYushu())) {
-                        isIn += 1;
-                    }
-                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobELuShu()) && ssqYuCeLogDO.getJobELuShu().contains(ssqDetailInfoDO.getEYushu())) {
-                        isIn += 1;
-                    }
-                    if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobFLuShu()) && ssqYuCeLogDO.getJobFLuShu().contains(ssqDetailInfoDO.getFYushu())) {
-                        isIn += 1;
-                    }
-                    isin.append("余数中："+isIn);
-                    int tailSumValue = Integer.parseInt(ssqDetailInfoDO.getTailSumValue());
-                    if (tailSumValue >= ssqYuCeLogDO.getJobMinZongHe() && tailSumValue <= ssqYuCeLogDO.getJobMaxZongHe()) {
-                        isin.append("--在尾和区间");
-                    }
+        String issueno = ssqDetailInfoMapper.maxIssueno();
+        SsqDetailInfoDO querySsqDetailInfoDO1 = new SsqDetailInfoDO();
+        querySsqDetailInfoDO1.setIssueno(issueno);
+        SsqDetailInfoDO ssqDetailInfoDO = ssqDetailInfoMapper.selectOne(querySsqDetailInfoDO1);
 
-                    int sumValue = Integer.parseInt(ssqDetailInfoDO.getSumValue());
-                    if (sumValue >= ssqYuCeLogDO.getJobMinWeiHe() && sumValue <= ssqYuCeLogDO.getJobMaxWeiHe()) {
-                        isin.append("--在总和区间");
-                    }
+        if (ssqDetailInfoDO != null) {
+            long subId = ssqDetailInfoDO.getId() - 1;
+            SsqDetailInfoDO querySsqDetailInfoDO = new SsqDetailInfoDO();
+            querySsqDetailInfoDO.setId(subId);
+            SsqDetailInfoDO subSsqDetailInfoDO = ssqDetailInfoMapper.selectOne(querySsqDetailInfoDO);
 
-                    ssqYuCeLogDO.setIsHandle(0);
-                    ssqYuCeLogDO.setJobIsYuCeSuccess(isin.toString());
-                    Example example = new Example(SsqYuCeLogDO.class);
-                    example.createCriteria().andEqualTo("id",ssqYuCeLogDO.getId());
-                    ssqYuCeLogMapper.updateByExample(ssqYuCeLogDO,example);
+
+            SsqYuCeLogDO querySsqYuCeLogDO = new SsqYuCeLogDO();
+            querySsqYuCeLogDO.setIsHandle(1);
+            querySsqYuCeLogDO.setIssueno(subSsqDetailInfoDO.getIssueno());
+            SsqYuCeLogDO ssqYuCeLogDO = ssqYuCeLogMapper.selectOne(querySsqYuCeLogDO);
+
+            if (ssqYuCeLogDO != null) {
+                StringBuffer isin = new StringBuffer();
+                int isIn = 0;
+                if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobALuShu()) && ssqYuCeLogDO.getJobALuShu().contains(ssqDetailInfoDO.getAYushu())) {
+                    isIn += 1;
                 }
+                if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobBLuShu()) && ssqYuCeLogDO.getJobBLuShu().contains(ssqDetailInfoDO.getBYushu())) {
+                    isIn += 1;
+                }
+                if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobCLuShu()) && ssqYuCeLogDO.getJobCLuShu().contains(ssqDetailInfoDO.getCYushu())) {
+                    isIn += 1;
+                }
+                if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobDLuShu()) && ssqYuCeLogDO.getJobDLuShu().contains(ssqDetailInfoDO.getDYushu())) {
+                    isIn += 1;
+                }
+                if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobELuShu()) && ssqYuCeLogDO.getJobELuShu().contains(ssqDetailInfoDO.getEYushu())) {
+                    isIn += 1;
+                }
+                if (StringUtils.isNotBlank(ssqYuCeLogDO.getJobFLuShu()) && ssqYuCeLogDO.getJobFLuShu().contains(ssqDetailInfoDO.getFYushu())) {
+                    isIn += 1;
+                }
+                isin.append("余数中：" + isIn);
+                int tailSumValue = Integer.parseInt(ssqDetailInfoDO.getTailSumValue());
+                if (tailSumValue >= ssqYuCeLogDO.getJobMinZongHe() && tailSumValue <= ssqYuCeLogDO.getJobMaxZongHe()) {
+                    isin.append("--在尾和区间");
+                }
+
+                int sumValue = Integer.parseInt(ssqDetailInfoDO.getSumValue());
+                if (sumValue >= ssqYuCeLogDO.getJobMinWeiHe() && sumValue <= ssqYuCeLogDO.getJobMaxWeiHe()) {
+                    isin.append("--在总和区间");
+                }
+
+                ssqYuCeLogDO.setIsHandle(0);
+                ssqYuCeLogDO.setJobIsYuCeSuccess(isin.toString());
+                Example example = new Example(SsqYuCeLogDO.class);
+                example.createCriteria().andEqualTo("id", ssqYuCeLogDO.getId());
+                ssqYuCeLogMapper.updateByExample(ssqYuCeLogDO, example);
             }
+
         }
     }
 }

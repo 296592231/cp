@@ -1,4 +1,7 @@
 package com.jl.cp.test;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.extra.mail.MailAccount;
+import cn.hutool.extra.mail.MailUtil;
 import com.jl.cp.job.service.ShuangSeQiuJobService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
