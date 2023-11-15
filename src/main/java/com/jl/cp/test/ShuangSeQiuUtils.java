@@ -80,12 +80,12 @@ public class ShuangSeQiuUtils {
     public  static int[] prizes = {1,3,5,18,22,23};
 
     //尾数和区间
-    public static int START_MANTISSA_SUM = 18;
-    public static int END_MANTISSA_SUM = 36;
+    public static int START_MANTISSA_SUM = 22;
+    public static int END_MANTISSA_SUM = 34;
 
     //和值区间
-    public static int START_SUM = 65;
-    public static int END_SUM = 110;
+    public static int START_SUM = 60;
+    public static int END_SUM = 90;
 
     //三区间比（支持多个区间）
     public static List<int[]> THREE_SECTION = new ArrayList<>();
@@ -98,11 +98,11 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public static int[][] LU_SHU = new int[][]
-            {{1,2},{0,2},{0,2},{0,2},{1,2},{0,2}};
+            {{1,2},{1,2},{0,2},{1,2},{1,2},{0,2}};
 
     //每个球的区间
     public static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{2,5,6,8},{3,4,5,8},{7,8,10,11,12,13},{12,14,16,18,20},{17,20,23,24,26,27},{31,32,33}};
+            {{4,6,7,8},{10,14,15,18},{15,16,17,18,19},{21,22,23,24,25},{23,24,25,27},{31,32,33}};
 
     /**
      * 红球第一位通过守号 选2位坐等
@@ -114,18 +114,18 @@ public class ShuangSeQiuUtils {
 
     static {
         //三区间比设置（支持多个区间）
-//        THREE_SECTION.add(new int[]{2,2,2});
-//        THREE_SECTION.add(new int[]{2,1,3});
+        THREE_SECTION.add(new int[]{3,2,1});
+        THREE_SECTION.add(new int[]{3,1,2});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
-        SINGLE_AND_DOUBLE.add(new int[]{3,3});
+//        SINGLE_AND_DOUBLE.add(new int[]{3,3});
         SINGLE_AND_DOUBLE.add(new int[]{2,4});
-        SINGLE_AND_DOUBLE.add(new int[]{1,5});
+//        SINGLE_AND_DOUBLE.add(new int[]{1,5});
 
         //大小比例  第一个是大 第二个是小
         SIZE_RATIO.add(new int[]{2,4});
-        SIZE_RATIO.add(new int[]{4,2});
-        SIZE_RATIO.add(new int[]{3,3});
+//        SIZE_RATIO.add(new int[]{4,2});
+//        SIZE_RATIO.add(new int[]{3,3});
     }
 
     /**
@@ -608,25 +608,25 @@ public class ShuangSeQiuUtils {
        // System.out.println(new Gson().toJson(getRandom(singleAndDoubleList,2)));
 
         //大小比例
-        LinkedList<int[]> sizeRatio = getSizeRatio(sumList);
+        LinkedList<int[]> sizeRatio = getSizeRatio(singleAndDoubleList);
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(mantissaSumList);
-        LinkedList<int[]> jingxuan = selected(sumList);
-        printlnList.addAll(getRandom(jingxuan,40));
-        checkIsPrize(printlnList);
-        System.out.println(checkIsPrizeNum(printlnList));
+        LinkedList<int[]> luShu = luShu(sizeRatio);
+       // LinkedList<int[]> jingxuan = selected(luShu);
+       // printlnList.addAll(getRandom(luShu,30));
+//        checkIsPrize(printlnList);
+//        System.out.println(checkIsPrizeNum(printlnList));
 
         //每个区间
-        //LinkedList<int[]> eachNumberRangeList = eachNumberRange(mantissaSumList);
+        LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
         //printlnList.addAll(getRandom(eachNumberRangeList,10));
 
         //每个区间
-        LinkedList<int[]> selectedList = selected(luShu);
+        //LinkedList<int[]> selectedList = selected(jingxuan);
         //printlnList.addAll(getRandom(selectedList,4));
 
-        System.out.println(new Gson().toJson(printlnList));
+        System.out.println(new Gson().toJson(eachNumberRangeList));
 
         checkIsPrize(printlnList);
     }

@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,8 +21,6 @@ public class BaseDO implements Serializable {
     private static final long serialVersionUID = 2400929148472356001L;
 
     /** 主键ID */
-    @Id
-    @GeneratedValue(generator = "JDBC")
     private Long              id;
 
     /** 创建日期 */

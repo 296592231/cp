@@ -1,16 +1,12 @@
 package com.jl.cp.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.Table;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.*;
 
 
-@Getter
-@Setter
-@ToString
-@Table(name = "ssq_detail_info")
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("ssq_detail_info")
 public class SsqDetailInfoDO extends BaseDO{
 
     private String issueno;

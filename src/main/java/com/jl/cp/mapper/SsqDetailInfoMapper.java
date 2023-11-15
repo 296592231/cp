@@ -1,14 +1,14 @@
 package com.jl.cp.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jl.cp.dto.StatYuShuDTO;
 import com.jl.cp.dto.SumValueDTO;
 import com.jl.cp.entity.SsqDetailInfoDO;
-import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
-public interface SsqDetailInfoMapper extends Mapper<SsqDetailInfoDO> {
+public interface SsqDetailInfoMapper extends BaseMapper<SsqDetailInfoDO> {
 
     List<SsqDetailInfoDO> selectListByLimit(Map<String,Object> map);
 

@@ -4,8 +4,6 @@ import com.jl.cp.entity.BaseDO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.Table;
 import java.util.Date;
 
 

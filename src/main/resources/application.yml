@@ -1,47 +1,36 @@
 spring:
   profiles:
     active: dev
-  mvc:
-    view:
-      prefix: /WEB-INF/
-      suffix: .jsp
-    static-path-pattern: /static/**
 
   datasource:
     druid:
-
-      type: com.alibaba.druid.pool.DruidDataSource
-      driverClassName: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/caipiao?zeroDateTimeBehavior=convertToNull&useUnicode=true&autoReconnect=true&failOverReadOnly=true&loadBalanceStrategy=random&readFormMasterNoSlaves=true&useSSL=false&serverTimezone=UTC
+      url: jdbc:mysql://192.168.1.133:3306/cp
       username: root
-      password: root
-      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000;config.decrypt=true    #数据库密码加密
-      #filters: stat,config,wall,log4j   # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
-      initialSize: 10
-      minIdle: 10
-      #maxIdle: 25
-      maxActive: 100
-      maxWait: 60000
-      maxAge: 600000
-      removeAbandoned: true
-      removeAbandonedTimeout: 60
-      timeBetweenEvictionRunsMillis: 20000
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: SELECT 1
-      validationQueryTimeout: 25
-      validationInterval: 30
-      testOnBorrow: true
-      testWhileIdle: true
-      testOnReturn: true
-      maxOpenPreparedStatements: 100
-      jdbcInterceptors: ConnectionState
-      defaultTransactionIsolation: 2
-      initSQL: SELECT 1
-      logAbandoned: true
-      jmxEnabled: true
+      password: 123123
+      driver-class-name: com.mysql.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource  # 指定使用 Druid 连接池
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat,wall,log4j
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 
-mybatis:
-  mapper-locations: classpath:mapping/*Mapper.xml
-  type-aliases-package: com.le.cp.entity
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.jl.cp.entity
+  global-config:
+    db-config:
+      id-type: auto
+
 
 
