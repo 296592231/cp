@@ -14,7 +14,7 @@ public class Constants {
     /**
      * 大乐透查询历史信息url
      */
-    public static final String URL_HISTORY = "http://api.jisuapi.com/caipiao/history?appkey=f97b238f39605adf&appsecret=OMVH7cESwJ4FwvZmksRo6oG3chlliha2";
+    public static final String URL_HISTORY = "http://api.jisuapi.com/caipiao/history?appkey=eb60caaefbb40d74&appsecret=XSEJFWjTkZhEghgZMc9tQ7kgbbiBX32M";
 
     /**
      * 大乐透查询接口

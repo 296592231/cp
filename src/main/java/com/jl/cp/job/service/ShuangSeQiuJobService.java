@@ -40,7 +40,7 @@ public class ShuangSeQiuJobService {
         //获取1000期彩票数据
         List<SsqBaseInfoResponseVO> saveList = new ArrayList<>();
         int tempIssueno = 0;
-        while (saveList.size() < 1500) {
+        while (saveList.size() < 1700) {
             SsqJsBaseResponseVO result = getData(20, tempIssueno, 11);
 
             if (result == null || !result.getStatus().equals("0")) {

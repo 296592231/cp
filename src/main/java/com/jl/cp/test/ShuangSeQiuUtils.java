@@ -102,7 +102,7 @@ public class ShuangSeQiuUtils {
 
     //每个球的区间
     public static int[][] EACH_NUMBER_RANGE = new int[][]
-            {{4,6,7,8},{10,14,15,18},{15,16,17,18,19},{21,22,23,24,25},{23,24,25,27},{31,32,33}};
+            {{1,2,3,4},{1,14,15,18},{15,16,17,18,19},{21,22,23,24,25},{23,24,25,27},{31,32,33}};
 
     /**
      * 红球第一位通过守号 选2位坐等
@@ -114,8 +114,7 @@ public class ShuangSeQiuUtils {
 
     static {
         //三区间比设置（支持多个区间）
-        THREE_SECTION.add(new int[]{3,2,1});
-        THREE_SECTION.add(new int[]{3,1,2});
+        THREE_SECTION.add(new int[]{2,2,2});
 
         //单双比例（支持多个区间） 第一个是单  第二个是双
 //        SINGLE_AND_DOUBLE.add(new int[]{3,3});
@@ -592,43 +591,44 @@ public class ShuangSeQiuUtils {
         LinkedList<int[]>  printlnList = new LinkedList<>();
 
         //尾数和
-        LinkedList<int[]> mantissaSumList = mantissaSum(resultList);
+    //    LinkedList<int[]> mantissaSumList = mantissaSum(resultList);
         //printlnList.addAll(getRandom(mantissaSumList,1));
 
         //在和值区间的双色求号码组
-        LinkedList<int[]> sumList = getSumList(mantissaSumList);
+     //   LinkedList<int[]> sumList = getSumList(mantissaSumList);
         //System.out.println(new Gson().toJson(getRandom(sumList,1)));
 
 //        //三区间比
-        LinkedList<int[]> threeSectionList = getThreeSection(sumList);
+        LinkedList<int[]> threeSectionList = getThreeSection(resultList);
         //System.out.println(new Gson().toJson(getRandom(threeSectionList,2)));
 
 //        //奇偶比例
-        LinkedList<int[]> singleAndDoubleList = getSingleAndDouble(threeSectionList);
+     //   LinkedList<int[]> singleAndDoubleList = getSingleAndDouble(threeSectionList);
        // System.out.println(new Gson().toJson(getRandom(singleAndDoubleList,2)));
 
         //大小比例
-        LinkedList<int[]> sizeRatio = getSizeRatio(singleAndDoubleList);
+      //  LinkedList<int[]> sizeRatio = getSizeRatio(singleAndDoubleList);
         //System.out.println(new Gson().toJson(getRandom(sizeRatio,2)));
 
         //大小比例
-        LinkedList<int[]> luShu = luShu(sizeRatio);
+       // LinkedList<int[]> luShu = luShu(sizeRatio);
        // LinkedList<int[]> jingxuan = selected(luShu);
        // printlnList.addAll(getRandom(luShu,30));
 //        checkIsPrize(printlnList);
 //        System.out.println(checkIsPrizeNum(printlnList));
 
         //每个区间
-        LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
+   //     LinkedList<int[]> eachNumberRangeList = eachNumberRange(luShu);
         //printlnList.addAll(getRandom(eachNumberRangeList,10));
 
         //每个区间
         //LinkedList<int[]> selectedList = selected(jingxuan);
-        //printlnList.addAll(getRandom(selectedList,4));
+//        printlnList.addAll(getRandom(threeSectionList,50));
+//
+        System.out.println(threeSectionList.size());
+        System.out.println(new Gson().toJson(printlnList));
 
-        System.out.println(new Gson().toJson(eachNumberRangeList));
-
-        checkIsPrize(printlnList);
+        //checkIsPrize(printlnList);
     }
 
     /**
